@@ -29,15 +29,19 @@ const oswald = Oswald({
 
 /* -------------------- Métadonnées (SEO + PWA) -------------------- */
 export const metadata: Metadata = {
-  title: 'Voisin d’Urgence — L’entraide de quartier à Nouakchott',
+  title: 'Rijal Lghayth — Entraide · Proximité · Sécurité',
   description:
-    'Demandez de l’aide à vos voisins en un geste, en cas d’urgence. Géolocalisation et alertes en temps réel.',
+    'Demandez de l’aide à vos voisins en un geste, en cas d’urgence, à Nouakchott. Géolocalisation et alertes en temps réel.',
   generator: 'v0.app',
   manifest: '/manifest.json', // Rend l'app installable (PWA)
+  icons: {
+    icon: '/logo.jpeg',
+    apple: '/logo.jpeg',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Voisin d’Urgence',
+    title: 'Rijal Lghayth',
   },
 }
 

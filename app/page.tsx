@@ -2,25 +2,34 @@
    page.tsx — PAGE TEMPORAIRE (écran de démarrage / vitrine du design system)
    ----------------------------------------------------------------------------
    NOTE : Cette page est un simple aperçu pour vérifier que le design system
-   fonctionne (couleurs, polices, bouton pulsant). Elle sera remplacée par la
-   vraie page d'Accueil quand tu m'enverras ton premier prompt.
+   fonctionne (logo, couleurs, polices, bouton pulsant). Elle sera remplacée
+   par la vraie page d'Accueil quand tu m'enverras ton premier prompt.
    ============================================================================ */
 
-import { ShieldCheck } from 'lucide-react'
+import Image from 'next/image'
 
 export default function Page() {
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-10 px-6 py-12">
-      {/* -------- Logo + titre -------- */}
-      <div className="flex flex-col items-center gap-3 text-center">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/15 text-primary">
-          <ShieldCheck className="size-7" aria-hidden="true" />
+      {/* -------- Logo officiel + slogan -------- */}
+      <div className="flex flex-col items-center gap-4 text-center">
+        <div className="flex size-28 items-center justify-center overflow-hidden rounded-3xl bg-card ring-1 ring-border">
+          <Image
+            src="/logo.jpeg"
+            alt="Logo Rijal Lghayth : écusson d'entraide de quartier"
+            width={112}
+            height={112}
+            priority
+            className="size-full object-cover"
+          />
         </div>
         <h1 className="text-4xl font-semibold uppercase tracking-tight text-balance">
-          Voisin d&apos;Urgence
+          Rijal Lghayth
         </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground text-pretty">
-          L&apos;entraide de quartier en temps réel à Nouakchott. Le design system est prêt.
+        {/* Slogan du logo, avec les 3 couleurs de la marque */}
+        <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+          Entraide <span className="text-success">·</span> Proximité{' '}
+          <span className="text-primary">·</span> Sécurité
         </p>
       </div>
 
@@ -41,7 +50,7 @@ export default function Page() {
       </div>
 
       <p className="text-center text-xs text-muted-foreground">
-        Envoie-moi ton premier prompt pour construire la page 1.
+        Design system prêt. Envoie-moi ton premier prompt pour construire la page 1.
       </p>
     </main>
   )

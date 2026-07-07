@@ -4,41 +4,48 @@
    NOTE : Cette page est un simple aperçu pour vérifier que le design system
    fonctionne (logo, couleurs, polices, bouton pulsant). Elle sera remplacée
    par la vraie page d'Accueil quand tu m'enverras ton premier prompt.
+
+   Choix de design :
+     - On affiche UNIQUEMENT le logo (il contient déjà le nom + le slogan).
+     - Le logo ayant un fond clair, on le pose dans un cadre clair arrondi
+       "intentionnel" (halo doux) pour qu'il paraisse net et non pas comme
+       un carré blanc posé au hasard sur le fond sombre #0F1418.
    ============================================================================ */
 
 import Image from 'next/image'
 
 export default function Page() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-10 px-6 py-12">
-      {/* -------- Logo officiel + slogan -------- */}
-      <div className="flex flex-col items-center gap-4 text-center">
-        <div className="flex size-28 items-center justify-center overflow-hidden rounded-3xl bg-card ring-1 ring-border">
+    <main className="relative mx-auto flex min-h-[100dvh] max-w-md flex-col items-center justify-center gap-14 overflow-hidden px-6 py-12">
+      {/* Halo décoratif très subtil derrière le contenu (ambiance, non intrusif) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-24 -z-10 size-72 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"
+      />
+
+      {/* -------- Logo officiel SEUL (le texte est déjà dans l'image) -------- */}
+      <div className="flex flex-col items-center">
+        <div className="rounded-[2rem] bg-white p-4 shadow-2xl ring-1 ring-white/10">
           <Image
             src="/logo.jpeg"
-            alt="Logo Rijal Lghayth : écusson d'entraide de quartier"
-            width={112}
-            height={112}
+            alt="Rijal Lghayth — Entraide, Proximité, Sécurité"
+            width={200}
+            height={200}
             priority
-            className="size-full object-cover"
+            className="size-40 rounded-2xl object-contain"
           />
         </div>
-        <h1 className="text-4xl font-semibold uppercase tracking-tight text-balance">
-          Rijal Lghayth
-        </h1>
-        {/* Slogan du logo, avec les 3 couleurs de la marque */}
-        <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-          Entraide <span className="text-success">·</span> Proximité{' '}
-          <span className="text-primary">·</span> Sécurité
-        </p>
       </div>
 
       {/* -------- Bouton principal avec halo pulsant (signature de l'app) -------- */}
       <button
         type="button"
-        className="flex size-40 flex-col items-center justify-center gap-1 rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-200 animate-pulse-ring active:scale-95"
+        aria-label="Demander de l'aide"
+        className="flex size-44 flex-col items-center justify-center gap-1 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-transform duration-200 animate-pulse-ring active:scale-95"
       >
-        <span className="font-display text-2xl font-semibold uppercase">Aide</span>
+        <span className="font-display text-3xl font-semibold uppercase tracking-wide">
+          Aide
+        </span>
         <span className="text-xs font-medium opacity-80">Appuyer</span>
       </button>
 
@@ -49,7 +56,7 @@ export default function Page() {
         <ColorSwatch label="Carte" className="border border-border bg-card text-card-foreground" />
       </div>
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-center text-xs text-muted-foreground text-balance">
         Design system prêt. Envoie-moi ton premier prompt pour construire la page 1.
       </p>
     </main>

@@ -47,14 +47,14 @@ export const metadata: Metadata = {
 
 /* -------------------- Viewport MOBILE-FIRST --------------------
    maximumScale + userScalable=false empêchent le zoom automatique
-   des champs de saisie sur iOS Safari. themeColor = fond sombre. */
+   des champs de saisie sur iOS Safari. themeColor = fond clair. */
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#0f1418',
-  colorScheme: 'dark',
+  themeColor: '#f6f8fa',
+  colorScheme: 'light',
 }
 
 export default function RootLayout({

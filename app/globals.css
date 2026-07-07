@@ -1,10 +1,10 @@
 /* ============================================================================
-   globals.css — DESIGN SYSTEM GLOBAL de l'application "Voisin d'Urgence"
+   globals.css — DESIGN SYSTEM GLOBAL de l'application "Rijal Lghayth"
    ----------------------------------------------------------------------------
    Ce fichier définit TOUTE l'identité visuelle partagée par les 8 pages :
-     - Les couleurs (fond sombre, accent corail, vert menthe de succès)
-     - Les polices (titres condensés + Inter pour le texte)
-     - Les rayons d'arrondi, bordures, etc.
+     - Les couleurs (thème CLAIR premium, accent corail, vert menthe de succès)
+     - Les polices (titres condensés Oswald + Inter pour le texte)
+     - Les rayons d'arrondi, bordures, animations, etc.
    Chaque page héritera automatiquement de ces réglages.
    ============================================================================ */
 
@@ -45,10 +45,13 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Couleurs "métier" personnalisées (utilisables via bg-success, text-coral...) */
+  /* Couleurs "métier" personnalisées :
+     - success/menthe  -> bg-success, text-success
+     - coral           -> bg-coral, text-coral (accent d'urgence) */
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
-  --color-coral: var(--primary);
+  --color-coral: var(--coral);
+  --color-coral-foreground: var(--coral-foreground);
 
   /* Couleurs pour les graphiques / statuts */
   --color-chart-1: var(--chart-1);
@@ -70,60 +73,64 @@
 }
 
 /* ----------------------------------------------------------------------------
-   VALEURS DES COULEURS
-   Application volontairement en thème SOMBRE UNIQUEMENT (mobile, usage de nuit).
-   Palette : 3 neutres (fond, carte, texte) + corail (accent) + menthe (succès).
+   VALEURS DES COULEURS — THÈME CLAIR
+   Palette (max 5) : blanc cassé (fond) + blanc (carte) + bleu marine (texte/marque)
+   + corail (accent urgence) + vert menthe (succès).
    ---------------------------------------------------------------------------- */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* Neutres sombres */
-  --background: #0f1418; /* Fond principal très sombre */
-  --foreground: #e8edf1; /* Texte principal clair */
+  /* Neutres clairs */
+  --background: #f6f8fa; /* Fond principal : blanc cassé légèrement froid */
+  --foreground: #1a2436; /* Texte principal : bleu marine profond */
 
-  --card: #161d23; /* Cartes / panneaux légèrement plus clairs que le fond */
-  --card-foreground: #e8edf1;
+  --card: #ffffff; /* Cartes / panneaux : blanc pur */
+  --card-foreground: #1a2436;
 
-  --popover: #1b232a; /* Menus, popovers */
-  --popover-foreground: #e8edf1;
+  --popover: #ffffff; /* Menus, popovers */
+  --popover-foreground: #1a2436;
 
-  /* Accent principal : CORAIL (urgence sans l'agressivité du rouge pur) */
-  --primary: #ff6b4a;
-  --primary-foreground: #0f1418; /* Texte sombre posé sur le corail */
+  /* Couleur PRIMAIRE : BLEU MARINE (marque, titres, boutons principaux) */
+  --primary: #1e2a4a;
+  --primary-foreground: #ffffff; /* Texte blanc posé sur le marine */
 
   /* Surfaces secondaires (boutons discrets, badges) */
-  --secondary: #1e272e;
-  --secondary-foreground: #e8edf1;
+  --secondary: #eef1f5;
+  --secondary-foreground: #1e2a4a;
 
-  --muted: #1e272e; /* Zones atténuées */
-  --muted-foreground: #8b98a3; /* Texte secondaire gris-bleu */
+  --muted: #eef1f5; /* Zones atténuées */
+  --muted-foreground: #667085; /* Texte secondaire gris-bleu */
 
-  /* Accent secondaire réutilisant le corail pour les surbrillances */
-  --accent: #22303a;
-  --accent-foreground: #e8edf1;
+  /* Accent doux (surbrillances de fond) */
+  --accent: #eaf6f0; /* Vert menthe très pâle */
+  --accent-foreground: #1a2436;
+
+  /* CORAL : accent d'URGENCE (bouton principal) */
+  --coral: #ff6b4a;
+  --coral-foreground: #ffffff;
 
   /* Succès / confirmation : VERT MENTHE */
-  --success: #3ddc97;
-  --success-foreground: #0f1418;
+  --success: #16b47a; /* Version un peu plus soutenue pour contraste sur blanc */
+  --success-foreground: #ffffff;
 
-  /* Danger / erreur */
-  --destructive: #ff4d4d;
+  /* Danger / erreur : réutilise le corail pour rester cohérent */
+  --destructive: #ff6b4a;
   --destructive-foreground: #ffffff;
 
-  /* Bordures et champs (blanc translucide pour rester discret sur le sombre) */
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 14%);
+  /* Bordures et champs (gris très clair) */
+  --border: #e3e8ee;
+  --input: #e3e8ee;
   --ring: #ff6b4a; /* Halo de focus corail */
 
   /* Palette pour graphiques / niveaux de gravité */
   --chart-1: #ff6b4a; /* corail */
-  --chart-2: #3ddc97; /* menthe */
-  --chart-3: #ffb020; /* ambre */
-  --chart-4: #4a9fff; /* bleu */
-  --chart-5: #b06bff; /* violet doux */
+  --chart-2: #16b47a; /* menthe */
+  --chart-3: #f5a524; /* ambre */
+  --chart-4: #3b82f6; /* bleu */
+  --chart-5: #1e2a4a; /* marine */
 
   /* Rayon d'arrondi de base (boutons, cartes bien arrondis = look moderne) */
-  --radius: 0.875rem;
+  --radius: 1rem;
 }
 
 /* ----------------------------------------------------------------------------
@@ -132,14 +139,28 @@
    ---------------------------------------------------------------------------- */
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 107, 74, 0.55);
+    box-shadow: 0 0 0 0 rgba(255, 107, 74, 0.5);
   }
   70% {
-    box-shadow: 0 0 0 28px rgba(255, 107, 74, 0);
+    box-shadow: 0 0 0 32px rgba(255, 107, 74, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(255, 107, 74, 0);
   }
+}
+
+/* Léger "battement" du bouton lui-même (optionnel, classe animate-soft-beat) */
+@keyframes soft-beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+.animate-soft-beat {
+  animation: soft-beat 2.4s ease-in-out infinite;
 }
 
 /* ----------------------------------------------------------------------------

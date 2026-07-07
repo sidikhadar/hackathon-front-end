@@ -1,0 +1,19 @@
+{
+  "name": "Voisin d'Urgence",
+  "short_name": "Voisin d'Urgence",
+  "description": "L'entraide de quartier en temps réel à Nouakchott. Demandez de l'aide à vos voisins en cas d'urgence.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1418",
+  "theme_color": "#0f1418",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

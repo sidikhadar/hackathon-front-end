@@ -11,7 +11,8 @@
 
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Inter, Oswald } from 'next/font/google'
+import { Inter, Oswald, Cairo } from 'next/font/google'
+import { LanguageProvider } from '@/lib/i18n'
 import './globals.css'
 
 /* Police du CORPS de texte : Inter (très lisible, moderne) */
@@ -25,6 +26,15 @@ const oswald = Oswald({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-oswald', // Utilisée par --font-display dans globals.css
+})
+
+/* Police ARABE : Cairo (glyphes arabes modernes + lisibles).
+   Utilisée en repli (fallback) pour tous les caractères arabes, aussi bien
+   dans le corps de texte que dans les titres. */
+const cairo = Cairo({
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-cairo',
 })
 
 /* -------------------- Métadonnées (SEO + PWA) -------------------- */
@@ -63,10 +73,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    // On applique le fond sombre + les variables de police sur <html>
-    <html lang="fr" className={`${inter.variable} ${oswald.variable} bg-background`}>
+    // On applique le fond sombre + les variables de police sur <html>.
+    // lang/dir sont ajustes dynamiquement par LanguageProvider (FR = ltr, AR = rtl).
+    <html
+      lang="fr"
+      dir="ltr"
+      className={`${inter.variable} ${oswald.variable} ${cairo.variable} bg-background`}
+    >
       <body className="font-sans antialiased">
-        {children}
+        {/* LanguageProvider rend la langue + les traductions accessibles partout */}
+        <LanguageProvider>{children}</LanguageProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

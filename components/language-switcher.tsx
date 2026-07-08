@@ -1,11 +1,11 @@
 /* ============================================================================
    language-switcher.tsx — SELECTEUR DE LANGUE (Francais / Arabe)
    ----------------------------------------------------------------------------
-   Petit "interrupteur segmente" avec les 2 drapeaux :
-     - Drapeau France  -> Francais (lecture gauche->droite)
+   Affiche 2 "pastilles-drapeaux" (facon Smart Reglili) SANS texte :
+     - Drapeau France     -> Francais (lecture gauche->droite)
      - Drapeau Mauritanie -> Arabe (lecture droite->gauche)
-   Au clic, on change la langue via le contexte i18n : toute l'app bascule.
-   Le bouton de la langue ACTIVE est mis en avant (surface claire + ombre).
+   La langue ACTIVE est mise en avant par un contour corail + une legere echelle.
+   Au clic, toute l'app bascule (langue + sens de lecture) via le contexte i18n.
    ============================================================================ */
 
 'use client'
@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils'
 export function LanguageSwitcher({ className }: { className?: string }) {
   const { lang, setLang, t } = useLanguage()
 
-  // Liste des langues proposees (drapeau + libelle)
+  // Liste des langues proposees (drapeau + libelle pour l'accessibilite)
   const options: { code: Lang; label: string; Flag: typeof FranceFlag }[] = [
     { code: 'fr', label: t.langNames.fr, Flag: FranceFlag },
     { code: 'ar', label: t.langNames.ar, Flag: MauritaniaFlag },
@@ -25,13 +25,9 @@ export function LanguageSwitcher({ className }: { className?: string }) {
 
   return (
     <div
-      className={cn(
-        // Conteneur "pilule" qui regroupe les 2 choix
-        'inline-flex items-center gap-1 rounded-full border border-border bg-card/70 p-1 backdrop-blur',
-        className,
-      )}
+      className={cn('inline-flex items-center gap-2', className)}
       role="group"
-      aria-label="Choisir la langue"
+      aria-label="Choisir la langue / اختر اللغة"
     >
       {options.map(({ code, label, Flag }) => {
         const active = lang === code
@@ -41,18 +37,17 @@ export function LanguageSwitcher({ className }: { className?: string }) {
             type="button"
             onClick={() => setLang(code)}
             aria-pressed={active}
+            aria-label={label}
+            title={label}
             className={cn(
-              'flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold transition-all duration-200',
+              // Pastille-drapeau : rectangle arrondi qui contient le drapeau
+              'relative h-9 w-12 overflow-hidden rounded-xl transition-all duration-200 active:scale-95',
               active
-                ? 'bg-secondary text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground',
+                ? 'ring-2 ring-coral ring-offset-2 ring-offset-background'
+                : 'opacity-60 ring-1 ring-white/15 hover:opacity-100',
             )}
           >
-            {/* Drapeau dans un petit cadre arrondi */}
-            <span className="h-4 w-6 overflow-hidden rounded-[3px] ring-1 ring-white/15">
-              <Flag className="h-full w-full" />
-            </span>
-            {label}
+            <Flag className="h-full w-full" />
           </button>
         )
       })}

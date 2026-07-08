@@ -1,40 +1,42 @@
 /* ============================================================================
-   auth-topbar.tsx — BARRE HAUTE des pages Connexion / Inscription
+   auth-topbar.tsx — EN-TETE des pages Connexion / Inscription
    ----------------------------------------------------------------------------
-   Regroupe, sur une seule ligne :
-     - a gauche  : un bouton "Retour" (fleche)
-     - a droite  : le selecteur de langue (FR / AR) + le bouton "Aide"
-   Grace aux classes logiques (start/end), la disposition s'inverse
-   automatiquement en arabe (RTL) : le retour passe a droite, etc.
+   Une seule ligne, identique sur les 2 pages :
+     - cote DEBUT (gauche en FR) : embleme + titre "Rijal Lghayth"
+     - cote FIN   (droite en FR) : bouton "Retour"
+   Pas de selecteur de langue ni de bouton Aide ici : la langue se choisit
+   uniquement sur l'ecran d'accueil (Welcome). Les classes logiques start/end
+   inversent automatiquement la disposition en arabe (RTL).
    ============================================================================ */
 
 'use client'
 
 import { ArrowLeft } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
-import { LanguageSwitcher } from '@/components/language-switcher'
-import { HelpContact } from '@/components/help-contact'
+import { Emblem } from '@/components/emblem'
 
 export function AuthTopBar({ onBack }: { onBack: () => void }) {
   const { t, dir } = useLanguage()
 
   return (
     <div className="flex items-center justify-between gap-3">
-      {/* Bouton retour — la fleche pointe vers le "debut" de lecture */}
+      {/* --- Embleme + titre de la marque --- */}
+      <div className="flex items-center gap-2.5">
+        <Emblem size={44} priority />
+        <span className="font-display text-xl font-semibold tracking-tight text-foreground">
+          {t.common.brand}
+        </span>
+      </div>
+
+      {/* --- Bouton retour (pilule avec fleche + libelle) --- */}
       <button
         onClick={onBack}
-        aria-label={t.common.back}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-colors hover:bg-accent"
+        className="flex h-11 items-center gap-1.5 rounded-full bg-secondary px-4 text-sm font-medium text-secondary-foreground transition-colors hover:bg-accent"
       >
-        {/* En arabe (RTL), on retourne la fleche pour qu'elle pointe a droite */}
-        <ArrowLeft className={dir === 'rtl' ? 'h-5 w-5 rotate-180' : 'h-5 w-5'} />
+        {/* En arabe (RTL) la fleche est retournee pour pointer dans le bon sens */}
+        <ArrowLeft className={dir === 'rtl' ? 'h-4 w-4 rotate-180' : 'h-4 w-4'} />
+        {t.common.back}
       </button>
-
-      {/* Langue + Aide */}
-      <div className="flex items-center gap-2">
-        <LanguageSwitcher />
-        <HelpContact />
-      </div>
     </div>
   )
 }

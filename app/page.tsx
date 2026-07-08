@@ -18,6 +18,7 @@ import { ShieldCheck } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { BrandLogo } from '@/components/brand-logo'
 import { LanguageSwitcher } from '@/components/language-switcher'
+import { HelpContact } from '@/components/help-contact'
 import { useLanguage } from '@/lib/i18n'
 
 export default function WelcomePage() {
@@ -25,9 +26,12 @@ export default function WelcomePage() {
 
   return (
     <AppShell className="items-center">
-      {/* --- Barre haute : selecteur de langue aligne cote "fin" --- */}
-      <div className="flex w-full justify-end">
+      {/* --- Barre haute : langue (cote debut) + Aide (cote fin) ---
+          justify-between pousse la langue au debut et l'aide a la fin ;
+          en arabe (RTL) les deux cotes s'inversent automatiquement. */}
+      <div className="flex w-full items-center justify-between gap-3">
         <LanguageSwitcher />
+        <HelpContact />
       </div>
 
       {/* --- Zone centrale : logo + UNE seule phrase (la 2e) --- */}

@@ -58,7 +58,7 @@ export function HelpContact({ className }: { className?: string }) {
         >
           <div className="mb-2 flex items-start justify-between gap-2">
             <p className="text-sm font-semibold text-foreground">
-              {t.help.question}
+              {t.help.title}
             </p>
             <button
               type="button"
@@ -70,7 +70,9 @@ export function HelpContact({ className }: { className?: string }) {
             </button>
           </div>
 
-          <p className="text-sm text-muted-foreground">{t.help.contact}</p>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {t.help.message}
+          </p>
 
           {/* Numero cliquable — force LTR pour ne jamais inverser les chiffres */}
           <a

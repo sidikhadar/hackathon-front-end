@@ -17,9 +17,9 @@ export function FranceFlag({ className }: { className?: string }) {
       aria-label="Français"
       preserveAspectRatio="xMidYMid slice"
     >
-      <rect width="1" height="2" x="0" fill="#0055A4" />
-      <rect width="1" height="2" x="1" fill="#FFFFFF" />
-      <rect width="1" height="2" x="2" fill="#EF4135" />
+      <rect width="1" height="2" x="0" fill="#002654" />
+      <rect width="1" height="2" x="1" fill="#F5F5F5" />
+      <rect width="1" height="2" x="2" fill="#CE1126" />
     </svg>
   )
 }
@@ -45,8 +45,8 @@ export function MauritaniaFlag({ className }: { className?: string }) {
             => il ne reste que la partie basse en forme de croissant. */}
         <mask id="rl-crescent">
           <rect width="900" height="600" fill="black" />
-          <circle cx="450" cy="330" r="120" fill="white" />
-          <circle cx="450" cy="290" r="120" fill="black" />
+          <circle cx="450" cy="345" r="128" fill="white" />
+          <circle cx="450" cy="300" r="128" fill="black" />
         </mask>
       </defs>
 
@@ -59,14 +59,14 @@ export function MauritaniaFlag({ className }: { className?: string }) {
       <rect
         width="900"
         height="600"
-        fill="#FFC400"
+        fill="#FFD100"
         mask="url(#rl-crescent)"
       />
 
       {/* Etoile doree a 5 branches, posee dans l'ouverture du croissant */}
       <polygon
-        fill="#FFC400"
-        points="450,238 460,266.3 489.9,267 466.2,285.3 474.7,314 450,297 425.3,314 433.8,285.3 410.1,267 440,266.3"
+        fill="#FFD100"
+        points="450,232 461.7,262.9 494.8,264.5 468.9,285.1 477.6,317.1 450,298.5 422.4,317.1 431.1,285.1 405.2,264.5 438.3,262.9"
       />
     </svg>
   )

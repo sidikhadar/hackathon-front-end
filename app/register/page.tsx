@@ -1,16 +1,13 @@
 /* ============================================================================
    app/register/page.tsx — ECRAN INSCRIPTION (formulaire + verification OTP)
    ----------------------------------------------------------------------------
-   Etape 1 ('form') : photo optionnelle, nom, telephone, contact d'urgence,
-                      + APPEL RAPIDE POLICE (117) toujours disponible.
-   Etape 2 ('otp')  : verification du code a 6 chiffres (comme la connexion).
-   Nouveautes :
-     - Barre haute avec langue (FR/AR) + bouton "Aide"
-     - Logo DISCRET en haut
-     - Bouton photo CORRIGE (clic fonctionnel) et mieux espace/visible
-     - Tous les textes traduits (FR / AR + RTL)
-     - Inscription verifiee -> redirection vers l'accueil /home
-   NB : logique simulee (aucun vrai SMS / stockage). Back-end branche plus tard.
+   Etape 1 ('form') : photo optionnelle, nom, telephone, mot de passe,
+                      contact d'urgence + APPEL RAPIDE POLICE (permanent).
+   Etape 2 ('otp')  : verification du code a 6 chiffres (ecran separe).
+   En-tete identique a la connexion (embleme + titre + Retour), SANS selecteur
+   de langue ni bouton Aide.
+   Inscription verifiee -> redirection vers l'accueil connecte /home.
+   NB : logique simulee (aucun vrai SMS / stockage).
    ============================================================================ */
 
 'use client'
@@ -18,10 +15,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Camera, Phone, User, UserPlus, Users } from 'lucide-react'
+import { Camera, Lock, Phone, User, UserPlus, Users } from 'lucide-react'
 import Image from 'next/image'
 import { AppShell } from '@/components/app-shell'
-import { BrandLogo } from '@/components/brand-logo'
 import { AuthTopBar } from '@/components/auth-topbar'
 import { Field } from '@/components/field'
 import { OtpInput } from '@/components/otp-input'
@@ -36,7 +32,7 @@ export default function RegisterPage() {
 
   // Etape courante : 'form' (formulaire) ou 'otp' (verification)
   const [step, setStep] = useState<'form' | 'otp'>('form')
-  const [photo, setPhoto] = useState<string | null>(null) // aperçu photo (optionnel)
+  const [photo, setPhoto] = useState<string | null>(null) // apercu photo (optionnel)
   const [phone, setPhone] = useState('') // pour l'affichage dans l'etape OTP
   const [code, setCode] = useState('')
   const [seconds, setSeconds] = useState(0)
@@ -48,7 +44,7 @@ export default function RegisterPage() {
     return () => clearInterval(timer)
   }, [seconds])
 
-  // Quand l'utilisateur choisit une image -> aperçu local
+  // Quand l'utilisateur choisit une image -> apercu local
   function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (file) setPhoto(URL.createObjectURL(file))
@@ -75,13 +71,12 @@ export default function RegisterPage() {
 
   return (
     <AppShell>
-      {/* --- Barre haute : retour + langue + aide --- */}
+      {/* --- En-tete : embleme + titre + Retour --- */}
       <AuthTopBar onBack={handleBack} />
 
-      {/* --- En-tete : logo DISCRET + titre selon l'etape --- */}
-      <header className="mt-6 flex flex-col items-start">
-        <BrandLogo size={52} />
-        <h1 className="mt-4 text-balance font-display text-3xl font-semibold text-foreground">
+      {/* --- Titre de l'ecran (selon l'etape) --- */}
+      <header className="mt-6">
+        <h1 className="text-balance font-display text-3xl font-semibold text-foreground">
           {step === 'form' ? t.register.title : t.register.titleOtp}
         </h1>
         <p className="mt-2 max-w-[20rem] text-pretty text-sm leading-relaxed text-muted-foreground">
@@ -101,14 +96,14 @@ export default function RegisterPage() {
       {step === 'form' ? (
         /* ================= ETAPE 1 : FORMULAIRE ================= */
         <form onSubmit={handleSubmit} className="mt-6 flex flex-1 flex-col gap-5">
-          {/* --- Photo de profil optionnelle (ligne claire + bien espacee) --- */}
+          {/* --- Photo de profil optionnelle (libelle affiche UNE seule fois) --- */}
           <div className="flex items-center gap-4 rounded-3xl border border-border bg-card/60 p-3.5">
-            {/* Aperçu / bouton rond cliquable */}
+            {/* Apercu / bouton rond cliquable */}
             <button
               type="button"
               onClick={() => fileInput.current?.click()}
               className="group relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-dashed border-border bg-input transition-colors hover:border-coral/60"
-              aria-label={t.register.photo}
+              aria-label={t.register.addPhoto}
             >
               {photo ? (
                 <Image
@@ -126,17 +121,22 @@ export default function RegisterPage() {
               </span>
             </button>
 
-            {/* Libelle + bouton texte (double moyen de declencher le choix) */}
+            {/* Libelle (une fois) + badge "optionnelle" + bouton d'action */}
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-foreground">
-                {t.register.photo}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-foreground">
+                  {t.register.photo}
+                </p>
+                <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                  {t.register.photoOptional}
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={() => fileInput.current?.click()}
                 className="mt-1 text-sm font-medium text-coral underline-offset-4 hover:underline"
               >
-                {photo ? t.register.photo : '+ ' + t.register.photo}
+                {photo ? t.register.changePhoto : t.register.addPhoto}
               </button>
             </div>
 
@@ -169,6 +169,16 @@ export default function RegisterPage() {
             placeholder="42 00 00 00"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+
+          {/* Mot de passe (avec bouton oeil) */}
+          <Field
+            label={t.register.passwordLabel}
+            icon={<Lock className="h-5 w-5" />}
+            type="password"
+            placeholder={t.register.passwordPlaceholder}
+            autoComplete="new-password"
             required
           />
 
@@ -210,7 +220,7 @@ export default function RegisterPage() {
           {/* --- Appel rapide POLICE (permanent, un clic) --- */}
           <PoliceQuickCall />
 
-          {/* Bouton de soumission (pousse en bas) */}
+          {/* Bouton de soumission + lien connexion (pousse en bas) */}
           <div className="mt-auto flex flex-col gap-4 pt-2">
             <Button
               type="submit"
@@ -233,12 +243,12 @@ export default function RegisterPage() {
           </div>
         </form>
       ) : (
-        /* ================= ETAPE 2 : VERIFICATION OTP ================= */
-        <div className="mt-8 flex flex-1 flex-col gap-5">
+        /* ================= ETAPE 2 : VERIFICATION OTP (ecran separe) ================= */
+        <div className="mt-8 flex flex-1 flex-col">
           <OtpInput value={code} onChange={setCode} />
 
           {/* Renvoi du code */}
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="mt-5 text-center text-sm text-muted-foreground">
             {seconds > 0 ? (
               <span>
                 {t.login.resendIn}{' '}
@@ -256,14 +266,16 @@ export default function RegisterPage() {
             )}
           </div>
 
-          <Button
-            size="lg"
-            onClick={handleVerify}
-            disabled={code.length < 6}
-            className="h-14 rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 disabled:opacity-40"
-          >
-            {t.register.verify}
-          </Button>
+          <div className="mt-auto pt-8">
+            <Button
+              size="lg"
+              onClick={handleVerify}
+              disabled={code.length < 6}
+              className="h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 disabled:opacity-40"
+            >
+              {t.register.verify}
+            </Button>
+          </div>
         </div>
       )}
     </AppShell>

@@ -13,7 +13,7 @@
 
 'use client'
 
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { ShieldCheck } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { BrandLogo } from '@/components/brand-logo'
@@ -21,7 +21,6 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { useLanguage } from '@/lib/i18n'
 
 export default function WelcomePage() {
-  const router = useRouter()
   const { t } = useLanguage() // textes traduits (FR / AR)
 
   return (
@@ -31,38 +30,36 @@ export default function WelcomePage() {
         <LanguageSwitcher />
       </div>
 
-      {/* --- Zone centrale : logo + accroche --- */}
+      {/* --- Zone centrale : logo + UNE seule phrase (la 2e) --- */}
       <div className="flex flex-1 flex-col items-center justify-center text-center">
-        <BrandLogo size={230} priority />
+        <BrandLogo size={210} priority />
 
-        {/* Accroche (le nom est deja dans le logo, on ajoute juste un slogan) */}
-        <h1 className="mt-6 max-w-[18rem] text-balance font-display text-3xl font-semibold leading-tight text-foreground">
-          {t.welcome.tagline}
-        </h1>
-        <p className="mt-3 max-w-[20rem] text-pretty text-sm leading-relaxed text-muted-foreground">
+        {/* Une seule phrase sous le logo (le nom est deja dans l'image) */}
+        <p className="mt-8 max-w-[20rem] text-pretty text-base leading-relaxed text-muted-foreground">
           {t.welcome.subtitle}
         </p>
       </div>
 
-      {/* --- Bas de page : 2 boutons empiles (facon Revolut) --- */}
+      {/* --- Bas de page : 2 boutons empiles (facon Revolut) ---
+          On utilise <Link> (navigation Next.js robuste et fiable) stylise
+          comme un bouton, au lieu d'un onClick : la navigation fonctionne
+          meme si le JavaScript n'est pas encore totalement charge. */}
       <div className="mt-6 flex w-full flex-col gap-3">
-        {/* Bouton PRINCIPAL : creer un compte (corail plein) */}
-        <button
-          type="button"
-          onClick={() => router.push('/register')}
-          className="h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground shadow-[0_16px_40px_-16px_rgba(255,107,74,0.7)] transition-all duration-200 hover:bg-coral/90 active:scale-[0.98]"
+        {/* Bouton PRINCIPAL : creer un compte (corail plein) -> /register */}
+        <Link
+          href="/register"
+          className="flex h-14 w-full items-center justify-center rounded-2xl bg-coral text-base font-semibold text-primary-foreground shadow-[0_16px_40px_-16px_rgba(255,107,74,0.7)] transition-all duration-200 hover:bg-coral/90 active:scale-[0.98]"
         >
           {t.common.register}
-        </button>
+        </Link>
 
-        {/* Bouton SECONDAIRE : se connecter (surface discrete) */}
-        <button
-          type="button"
-          onClick={() => router.push('/login')}
-          className="h-14 w-full rounded-2xl border border-border bg-secondary/60 text-base font-semibold text-foreground backdrop-blur transition-all duration-200 hover:bg-secondary active:scale-[0.98]"
+        {/* Bouton SECONDAIRE : se connecter (surface discrete) -> /login */}
+        <Link
+          href="/login"
+          className="flex h-14 w-full items-center justify-center rounded-2xl border border-border bg-secondary/60 text-base font-semibold text-foreground backdrop-blur transition-all duration-200 hover:bg-secondary active:scale-[0.98]"
         >
           {t.common.login}
-        </button>
+        </Link>
 
         {/* Note de rassurance */}
         <p className="mt-1 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">

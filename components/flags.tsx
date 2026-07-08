@@ -24,8 +24,12 @@ export function FranceFlag({ className }: { className?: string }) {
   )
 }
 
-/* Drapeau de la Mauritanie : champ vert, bandes rouges haut/bas,
-   croissant + etoile dores (symboles au centre). */
+/* Drapeau de la Mauritanie (version officielle depuis 2017) :
+   - Champ vert au centre
+   - Deux bandes rouges (en haut et en bas)
+   - Croissant dore ouvert vers le HAUT + etoile a 5 branches doree.
+   Le croissant est obtenu par un "masque" : un grand cercle plein moins un
+   cercle decale vers le haut, ce qui laisse une forme de croissant. */
 export function MauritaniaFlag({ className }: { className?: string }) {
   return (
     <svg
@@ -35,17 +39,35 @@ export function MauritaniaFlag({ className }: { className?: string }) {
       aria-label="العربية"
       preserveAspectRatio="xMidYMid slice"
     >
-      {/* Bandes rouges (haut et bas) */}
-      <rect width="900" height="600" fill="#D01C1F" />
-      {/* Champ vert central */}
-      <rect y="100" width="900" height="400" fill="#00A651" />
+      <defs>
+        {/* Masque : blanc = visible, noir = cache.
+            Grand cercle (visible) - cercle decale vers le haut (cache)
+            => il ne reste que la partie basse en forme de croissant. */}
+        <mask id="rl-crescent">
+          <rect width="900" height="600" fill="black" />
+          <circle cx="450" cy="330" r="120" fill="white" />
+          <circle cx="450" cy="290" r="120" fill="black" />
+        </mask>
+      </defs>
 
-      {/* Croissant dore (croissant = grand cercle jaune - cercle vert decale) */}
-      <g fill="#FFD200">
-        <path d="M450 200a150 150 0 1 0 0 300 120 120 0 1 1 0-300z" />
-        {/* Etoile a 5 branches au centre du croissant */}
-        <path d="M450 300l17 52h55l-44 32 17 52-45-32-45 32 17-52-44-32h55z" />
-      </g>
+      {/* Bandes rouges (fond entier rouge) */}
+      <rect width="900" height="600" fill="#CE1126" />
+      {/* Champ vert central (laisse le rouge apparaitre en haut et en bas) */}
+      <rect y="100" width="900" height="400" fill="#006233" />
+
+      {/* Croissant dore (rectangle dore visible seulement via le masque) */}
+      <rect
+        width="900"
+        height="600"
+        fill="#FFC400"
+        mask="url(#rl-crescent)"
+      />
+
+      {/* Etoile doree a 5 branches, posee dans l'ouverture du croissant */}
+      <polygon
+        fill="#FFC400"
+        points="450,238 460,266.3 489.9,267 466.2,285.3 474.7,314 450,297 425.3,314 433.8,285.3 410.1,267 440,266.3"
+      />
     </svg>
   )
 }

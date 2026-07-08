@@ -1,29 +1,34 @@
 /* ============================================================================
-   brand-logo.tsx — LOGO OFFICIEL "Rijal Lghayth" presente comme un badge
+   brand-logo.tsx — LOGO OFFICIEL "Rijal Lghayth"
    ----------------------------------------------------------------------------
-   Le logo fourni est une image (avec son propre fond clair) qui contient DEJA
-   le nom + le slogan. On ne re-ecrit donc AUCUN texte a cote.
-   Pour l'integrer proprement sur le theme sombre, on le pose dans un cadre
-   arrondi doux (effet "pastille de marque") -> rendu intentionnel et premium.
+   Le logo fourni est une image a FOND SOMBRE qui contient DEJA le nom + le
+   slogan. On ne re-ecrit donc AUCUN texte a cote.
+   Comme son fond est deja sombre, on l'affiche directement (object-contain)
+   sans cadre ni pastille : il se fond naturellement dans le theme premium.
    ============================================================================ */
 
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 export function BrandLogo({
-  size = 96,
+  size = 200,
   className,
+  priority = false,
 }: {
-  /** Taille (px) du badge carre du logo */
+  /** Largeur (px) du logo affiche */
   size?: number
   className?: string
+  /** true sur l'ecran d'accueil pour un chargement prioritaire */
+  priority?: boolean
 }) {
   return (
+    // Badge arrondi : le logo a un fond noir pur, on l'enveloppe dans un
+    // conteneur arrondi (avec une fine bordure) pour un rendu "pastille"
+    // intentionnel qui se fond dans le theme au lieu d'un carre visible.
     <div
       className={cn(
-        // Pastille claire arrondie : met le logo en valeur sur fond sombre
-        'inline-flex items-center justify-center overflow-hidden rounded-3xl bg-white/95 p-2 ring-1 ring-white/10',
-        'shadow-[0_18px_45px_-18px_rgba(0,0,0,0.8)]',
+        'inline-flex items-center justify-center overflow-hidden rounded-3xl bg-black ring-1 ring-white/10',
+        'shadow-[0_18px_45px_-20px_rgba(0,0,0,0.9)]',
         className,
       )}
       style={{ width: size, height: size }}
@@ -33,8 +38,8 @@ export function BrandLogo({
         alt="Rijal Lghayth — Entraide, Proximité, Sécurité"
         width={size * 2}
         height={size * 2}
-        priority
-        className="h-full w-full rounded-2xl object-contain"
+        priority={priority}
+        className="h-full w-full select-none object-cover"
       />
     </div>
   )

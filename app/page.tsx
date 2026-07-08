@@ -1,78 +1,94 @@
 /* ============================================================================
-   page.tsx — PAGE TEMPORAIRE (écran de démarrage / vitrine du design system)
+   app/page.tsx — ECRAN 1 : ACCUEIL
    ----------------------------------------------------------------------------
-   NOTE : Cette page est un simple aperçu pour vérifier que le design system
-   fonctionne (logo, couleurs, polices, bouton pulsant). Elle sera remplacée
-   par la vraie page d'Accueil quand tu m'enverras ton prochain prompt.
-
-   Choix de design (thème CLAIR premium) :
-     - Fond blanc cassé #F6F8FA -> le logo (fond crème) s'intègre naturellement.
-     - On affiche UNIQUEMENT le logo (il contient déjà le nom + le slogan).
-     - Bouton d'urgence CORAIL #FF6B4A avec halo pulsant : élément signature.
+   Ecran central de l'app. Contient :
+     - le logo officiel (sans texte duplique)
+     - une pastille de localisation (contexte Nouakchott)
+     - le BOUTON SIGNATURE "AIDE" (halo pulsant) au centre
+     - au clic : ouverture de la feuille des 6 types d'urgence
+     - un bandeau de reassurance + acces Connexion / Inscription
    ============================================================================ */
 
-import Image from 'next/image'
+'use client'
 
-export default function Page() {
+import { useState } from 'react'
+import Link from 'next/link'
+import { MapPin, ShieldCheck, Users } from 'lucide-react'
+import { AppShell } from '@/components/app-shell'
+import { BrandLogo } from '@/components/brand-logo'
+import { HelpButton } from '@/components/help-button'
+import { EmergencySheet } from '@/components/emergency-sheet'
+
+export default function HomePage() {
+  // Etat d'ouverture de la feuille des types d'urgence
+  const [sheetOpen, setSheetOpen] = useState(false)
+
   return (
-    <main className="relative mx-auto flex min-h-[100dvh] max-w-md flex-col items-center justify-between overflow-hidden px-6 pb-12 pt-10">
-      {/* Halo décoratif très subtil (ambiance douce, non intrusive) */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/3 -z-10 size-80 -translate-x-1/2 rounded-full bg-coral/5 blur-3xl"
-      />
+    <AppShell className="items-center">
+      {/* --- En-tete : logo seul (le nom est deja dans l'image) --- */}
+      <header className="flex w-full flex-col items-center pt-2">
+        <BrandLogo size={150} priority />
 
-      {/* -------- Logo officiel SEUL (le texte est déjà dans l'image) -------- */}
-      <div className="flex flex-col items-center pt-6">
-        <Image
-          src="/logo.jpeg"
-          alt="Rijal Lghayth — Entraide, Proximité, Sécurité"
-          width={220}
-          height={220}
-          priority
-          className="size-48 object-contain"
-        />
-      </div>
+        {/* Localisation active (contexte : Nouakchott) */}
+        <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-3 py-1.5 text-xs font-medium text-muted-foreground">
+          <MapPin className="h-3.5 w-3.5 text-coral" />
+          Tevragh-Zeina, Nouakchott
+        </div>
+      </header>
 
-      {/* -------- Bouton principal avec halo pulsant (signature de l'app) -------- */}
-      <div className="flex flex-col items-center gap-5">
-        <button
-          type="button"
-          aria-label="Demander de l'aide"
-          className="flex size-48 flex-col items-center justify-center gap-1 rounded-full bg-coral text-coral-foreground shadow-xl shadow-coral/30 transition-transform duration-200 animate-pulse-ring active:scale-95"
-        >
-          <span className="font-display text-4xl font-semibold uppercase tracking-wide">
-            Aide
-          </span>
-          <span className="text-xs font-medium uppercase tracking-widest opacity-90">
-            Appuyer
-          </span>
-        </button>
-        <p className="max-w-xs text-center text-sm text-muted-foreground text-pretty">
-          En cas d&apos;urgence, appuyez pour alerter vos voisins proches.
+      {/* --- Zone centrale : bouton d'urgence --- */}
+      <div className="flex flex-1 flex-col items-center justify-center py-8">
+        <HelpButton onClick={() => setSheetOpen(true)} />
+
+        <p className="mt-8 max-w-[16rem] text-balance text-center text-sm leading-relaxed text-muted-foreground">
+          En cas de danger, appuyez. Vos voisins proches seront alertés
+          <span className="text-foreground"> immédiatement</span>.
         </p>
       </div>
 
-      {/* -------- Aperçu de la palette (repère de dev, sera retiré) -------- */}
-      <div className="grid w-full grid-cols-3 gap-3">
-        <ColorSwatch label="Corail" className="bg-coral text-coral-foreground" />
-        <ColorSwatch label="Menthe" className="bg-success text-success-foreground" />
-        <ColorSwatch
-          label="Marine"
-          className="bg-primary text-primary-foreground"
-        />
+      {/* --- Bandeau de reassurance (2 indicateurs) --- */}
+      <div className="grid w-full grid-cols-2 gap-3">
+        <div className="card-premium flex items-center gap-3 p-3.5">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-success/15 text-success">
+            <Users className="h-5 w-5" />
+          </span>
+          <div className="leading-tight">
+            <p className="font-display text-lg font-semibold text-foreground">24</p>
+            <p className="text-xs text-muted-foreground">voisins actifs</p>
+          </div>
+        </div>
+        <div className="card-premium flex items-center gap-3 p-3.5">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-coral/15 text-coral">
+            <ShieldCheck className="h-5 w-5" />
+          </span>
+          <div className="leading-tight">
+            <p className="font-display text-lg font-semibold text-foreground">
+              &lt; 2 min
+            </p>
+            <p className="text-xs text-muted-foreground">temps de réponse</p>
+          </div>
+        </div>
       </div>
-    </main>
-  )
-}
 
-/* Petit composant local : une pastille de couleur avec son étiquette */
-function ColorSwatch({ label, className }: { label: string; className: string }) {
-  return (
-    <div
-      className={`flex h-16 items-end rounded-xl p-3 text-xs font-medium shadow-sm ${className}`}
-    >
-      {label}
-    </div>
+      {/* --- Pied de page : acces connexion / inscription --- */}
+      <footer className="mt-5 flex w-full items-center justify-center gap-1 text-sm text-muted-foreground">
+        <Link
+          href="/login"
+          className="font-medium text-foreground underline-offset-4 hover:underline"
+        >
+          Se connecter
+        </Link>
+        <span aria-hidden>·</span>
+        <Link
+          href="/register"
+          className="font-medium text-coral underline-offset-4 hover:underline"
+        >
+          Créer un compte
+        </Link>
+      </footer>
+
+      {/* --- Feuille des 6 types d'urgence (modale du bas) --- */}
+      <EmergencySheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
+    </AppShell>
   )
 }

@@ -15,7 +15,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Camera, Lock, Phone, User, UserPlus, Users } from 'lucide-react'
+import { Camera, CheckCircle2, Lock, LogIn, Phone, User, UserPlus, Users } from 'lucide-react'
 import Image from 'next/image'
 import { AppShell } from '@/components/app-shell'
 import { AuthTopBar } from '@/components/auth-topbar'
@@ -30,8 +30,8 @@ export default function RegisterPage() {
   const { t } = useLanguage() // textes traduits
   const fileInput = useRef<HTMLInputElement>(null)
 
-  // Etape courante : 'form' (formulaire) ou 'otp' (verification)
-  const [step, setStep] = useState<'form' | 'otp'>('form')
+  // Etape courante : 'form' -> 'otp' -> 'success'
+  const [step, setStep] = useState<'form' | 'otp' | 'success'>('form')
   const [photo, setPhoto] = useState<string | null>(null) // apercu photo (optionnel)
   const [phone, setPhone] = useState('') // pour l'affichage dans l'etape OTP
   const [code, setCode] = useState('')
@@ -57,13 +57,13 @@ export default function RegisterPage() {
     setSeconds(30)
   }
 
-  // Etape 2 : verification simulee -> accueil connecte
+  // Etape 2 : verification simulee -> carte de succes (etape 3)
   function handleVerify() {
     if (code.length < 6) return
-    router.push('/home')
+    setStep('success')
   }
 
-  // Retour : depuis l'OTP on revient au formulaire, sinon vers Welcome
+  // Retour : success -> Welcome, OTP -> formulaire, formulaire -> Welcome
   function handleBack() {
     if (step === 'otp') setStep('form')
     else router.push('/')
@@ -74,24 +74,26 @@ export default function RegisterPage() {
       {/* --- En-tete : embleme + titre + Retour --- */}
       <AuthTopBar onBack={handleBack} />
 
-      {/* --- Titre de l'ecran (selon l'etape) --- */}
-      <header className="mt-6">
-        <h1 className="text-balance font-display text-3xl font-semibold text-foreground">
-          {step === 'form' ? t.register.title : t.register.titleOtp}
-        </h1>
-        <p className="mt-2 max-w-[20rem] text-pretty text-sm leading-relaxed text-muted-foreground">
-          {step === 'form' ? (
-            t.register.subtitle
-          ) : (
-            <>
-              {t.register.subtitleOtp}{' '}
-              <span dir="ltr" className="font-semibold text-foreground">
-                +222 {phone}
-              </span>
-            </>
-          )}
-        </p>
-      </header>
+      {/* --- Titre de l'ecran (cache sur l'etape de succes) --- */}
+      {step !== 'success' && (
+        <header className="mt-6">
+          <h1 className="text-balance font-display text-3xl font-semibold text-foreground">
+            {step === 'form' ? t.register.title : t.register.titleOtp}
+          </h1>
+          <p className="mt-2 max-w-[20rem] text-pretty text-sm leading-relaxed text-muted-foreground">
+            {step === 'form' ? (
+              t.register.subtitle
+            ) : (
+              <>
+                {t.register.subtitleOtp}{' '}
+                <span dir="ltr" className="font-semibold text-foreground">
+                  +222 {phone}
+                </span>
+              </>
+            )}
+          </p>
+        </header>
+      )}
 
       {step === 'form' ? (
         /* ================= ETAPE 1 : FORMULAIRE ================= */
@@ -242,7 +244,7 @@ export default function RegisterPage() {
             </p>
           </div>
         </form>
-      ) : (
+      ) : step === 'otp' ? (
         /* ================= ETAPE 2 : VERIFICATION OTP (ecran separe) ================= */
         <div className="mt-8 flex flex-1 flex-col">
           <OtpInput value={code} onChange={setCode} />
@@ -276,6 +278,31 @@ export default function RegisterPage() {
               {t.register.verify}
             </Button>
           </div>
+        </div>
+      ) : (
+        /* ================= ETAPE 3 : CARTE DE SUCCES ================= */
+        <div className="flex flex-1 flex-col items-center justify-center py-10 text-center">
+          {/* Pastille verte + coche (animation d'apparition douce) */}
+          <span className="flex h-24 w-24 items-center justify-center rounded-full bg-success text-primary-foreground shadow-[0_20px_50px_-15px_rgba(34,153,84,0.6)] motion-safe:animate-in motion-safe:zoom-in-75 motion-safe:duration-500">
+            <CheckCircle2 className="h-12 w-12" strokeWidth={2.4} />
+          </span>
+
+          <h1 className="mt-8 text-balance font-display text-3xl font-semibold text-foreground">
+            {t.register.successTitle}
+          </h1>
+          <p className="mt-2 text-pretty text-base text-muted-foreground">
+            {t.register.successSubtitle}
+          </p>
+
+          {/* Aller vers la connexion */}
+          <Button
+            size="lg"
+            onClick={() => router.push('/login')}
+            className="mt-10 h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90"
+          >
+            <LogIn className="mr-1 h-5 w-5" />
+            {t.register.loginNow}
+          </Button>
         </div>
       )}
     </AppShell>

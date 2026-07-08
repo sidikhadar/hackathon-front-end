@@ -14,13 +14,13 @@
 'use client'
 
 import { useState } from 'react'
-import { MapPin, ShieldCheck, Users } from 'lucide-react'
+import { ShieldCheck, Users } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { BrandLogo } from '@/components/brand-logo'
 import { HelpButton } from '@/components/help-button'
 import { EmergencySheet } from '@/components/emergency-sheet'
 import { PoliceQuickCall } from '@/components/police-quick-call'
-import { LanguageSwitcher } from '@/components/language-switcher'
+import { HomeHeader } from '@/components/home-header'
 import { useLanguage } from '@/lib/i18n'
 
 export default function HomePage() {
@@ -29,14 +29,8 @@ export default function HomePage() {
 
   return (
     <AppShell className="items-center">
-      {/* --- Barre haute : localisation + selecteur de langue --- */}
-      <div className="flex w-full items-center justify-between gap-3">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-3 py-1.5 text-xs font-medium text-muted-foreground">
-          <MapPin className="h-3.5 w-3.5 text-coral" />
-          {t.home.location}
-        </div>
-        <LanguageSwitcher />
-      </div>
+      {/* --- En-tete : menu + localisation + cloche (notifications) --- */}
+      <HomeHeader alertCount={4} />
 
       {/* --- Logo agrandi (le nom est deja dans l'image) --- */}
       <header className="mt-4 flex w-full flex-col items-center">

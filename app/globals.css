@@ -1,11 +1,11 @@
 /* ============================================================================
    globals.css — DESIGN SYSTEM GLOBAL de l'application "Rijal Lghayth"
    ----------------------------------------------------------------------------
-   Ce fichier définit TOUTE l'identité visuelle partagée par les 8 pages :
-     - Les couleurs (thème CLAIR premium, accent corail, vert menthe de succès)
-     - Les polices (titres condensés Oswald + Inter pour le texte)
-     - Les rayons d'arrondi, bordures, animations, etc.
-   Chaque page héritera automatiquement de ces réglages.
+   Ce fichier definit TOUTE l'identite visuelle partagee par les 8 pages :
+     - Les couleurs (theme SOMBRE PREMIUM : bleu-nuit + corail + vert menthe)
+     - Les polices (titres condenses Oswald + Inter pour le texte)
+     - Les rayons d'arrondi, ombres douces, halos et animations
+   Chaque page heritera automatiquement de ces reglages.
    ============================================================================ */
 
 @import 'tailwindcss';
@@ -15,16 +15,15 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ----------------------------------------------------------------------------
-   @theme inline : on relie les "tokens" (variables) à des classes Tailwind.
-   Exemple : la variable --primary devient utilisable via `bg-primary`, etc.
-   On ajoute aussi nos polices : font-sans (Inter) et font-display (titres).
+   @theme inline : relie les "tokens" (variables) a des classes Tailwind.
+   Ex : --primary devient utilisable via `bg-primary`, `text-primary`, etc.
    ---------------------------------------------------------------------------- */
 @theme inline {
-  /* Polices — injectées depuis layout.tsx via next/font */
+  /* Polices — injectees depuis layout.tsx via next/font */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-oswald), 'Inter', sans-serif;
 
-  /* Couleurs de base reliées aux variables définies plus bas */
+  /* Couleurs de base reliees aux variables definies plus bas */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -45,22 +44,22 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Couleurs "métier" personnalisées :
-     - success/menthe  -> bg-success, text-success
-     - coral           -> bg-coral, text-coral (accent d'urgence) */
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
+  /* Couleurs "metier" personnalisees :
+     - coral   -> bg-coral / text-coral  (accent d'URGENCE, element central)
+     - success -> bg-success / text-success (vert menthe, confirmations) */
   --color-coral: var(--coral);
   --color-coral-foreground: var(--coral-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
 
-  /* Couleurs pour les graphiques / statuts */
+  /* Palette pour graphiques / niveaux de gravite */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  /* Rayons d'arrondi (déclinés à partir de --radius) */
+  /* Rayons d'arrondi (declines depuis --radius) — look moderne, doux */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.85);
   --radius-lg: var(--radius);
@@ -68,95 +67,100 @@
   --radius-2xl: calc(var(--radius) * 1.9);
   --radius-3xl: calc(var(--radius) * 2.4);
 
-  /* Animation de pulsation pour le bouton "Demander de l'aide" */
-  --animate-pulse-ring: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* Animation du halo de pulsation (bouton "Demander de l'aide") */
+  --animate-pulse-ring: pulse-ring 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* ----------------------------------------------------------------------------
-   VALEURS DES COULEURS — THÈME CLAIR
-   Palette (max 5) : blanc cassé (fond) + blanc (carte) + bleu marine (texte/marque)
-   + corail (accent urgence) + vert menthe (succès).
+   VALEURS DES COULEURS — THEME SOMBRE PREMIUM
+   Palette (5 couleurs) :
+     1. bleu-nuit profond (fond)      #0F1418
+     2. bleu ardoise (cartes/surfaces) #171E26
+     3. blanc froid (texte)            #E9EEF3
+     4. corail (accent urgence)        #FF6B4A
+     5. vert menthe (succes)           #3DDC97
    ---------------------------------------------------------------------------- */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  /* Neutres clairs */
-  --background: #f6f8fa; /* Fond principal : blanc cassé légèrement froid */
-  --foreground: #1a2436; /* Texte principal : bleu marine profond */
+  /* Fond principal : bleu-noir profond (PAS un noir pur) */
+  --background: #0f1418;
+  --foreground: #e9eef3; /* Texte principal : blanc legerement froid */
 
-  --card: #ffffff; /* Cartes / panneaux : blanc pur */
-  --card-foreground: #1a2436;
+  /* Surfaces : cartes et panneaux, un cran plus clairs que le fond */
+  --card: #171e26;
+  --card-foreground: #e9eef3;
 
-  --popover: #ffffff; /* Menus, popovers */
-  --popover-foreground: #1a2436;
+  --popover: #1b232c; /* Menus / feuilles modales */
+  --popover-foreground: #e9eef3;
 
-  /* Couleur PRIMAIRE : BLEU MARINE (marque, titres, boutons principaux) */
-  --primary: #1e2a4a;
-  --primary-foreground: #ffffff; /* Texte blanc posé sur le marine */
+  /* Couleur PRIMAIRE = CORAIL (bouton d'urgence, actions cles) */
+  --primary: #ff6b4a;
+  --primary-foreground: #1a0f0c; /* Texte fonce sur le corail vif */
 
-  /* Surfaces secondaires (boutons discrets, badges) */
-  --secondary: #eef1f5;
-  --secondary-foreground: #1e2a4a;
+  /* Surfaces secondaires (boutons discrets, chips) */
+  --secondary: #212b35;
+  --secondary-foreground: #e9eef3;
 
-  --muted: #eef1f5; /* Zones atténuées */
-  --muted-foreground: #667085; /* Texte secondaire gris-bleu */
+  --muted: #1b232c; /* Zones attenuees */
+  --muted-foreground: #8a97a6; /* Texte secondaire gris-bleu */
 
-  /* Accent doux (surbrillances de fond) */
-  --accent: #eaf6f0; /* Vert menthe très pâle */
-  --accent-foreground: #1a2436;
+  /* Accent doux (surbrillances subtiles) */
+  --accent: #212b35;
+  --accent-foreground: #e9eef3;
 
-  /* CORAL : accent d'URGENCE (bouton principal) */
+  /* CORAIL (raccourci metier pour l'urgence) */
   --coral: #ff6b4a;
-  --coral-foreground: #ffffff;
+  --coral-foreground: #1a0f0c;
 
-  /* Succès / confirmation : VERT MENTHE */
-  --success: #16b47a; /* Version un peu plus soutenue pour contraste sur blanc */
-  --success-foreground: #ffffff;
+  /* Succes / confirmation : VERT MENTHE */
+  --success: #3ddc97;
+  --success-foreground: #05231a;
 
-  /* Danger / erreur : réutilise le corail pour rester cohérent */
-  --destructive: #ff6b4a;
+  /* Danger / erreur : reutilise le corail pour rester coherent */
+  --destructive: #ff5a5a;
   --destructive-foreground: #ffffff;
 
-  /* Bordures et champs (gris très clair) */
-  --border: #e3e8ee;
-  --input: #e3e8ee;
+  /* Bordures et champs (bleu ardoise translucide) */
+  --border: #263140;
+  --input: #212b35;
   --ring: #ff6b4a; /* Halo de focus corail */
 
-  /* Palette pour graphiques / niveaux de gravité */
-  --chart-1: #ff6b4a; /* corail */
-  --chart-2: #16b47a; /* menthe */
-  --chart-3: #f5a524; /* ambre */
-  --chart-4: #3b82f6; /* bleu */
-  --chart-5: #1e2a4a; /* marine */
+  /* Palette pour graphiques / niveaux de gravite */
+  --chart-1: #ff6b4a; /* corail  — critique */
+  --chart-2: #3ddc97; /* menthe  — resolu */
+  --chart-3: #f5a524; /* ambre   — moyen */
+  --chart-4: #4a9eff; /* bleu    — info */
+  --chart-5: #8a97a6; /* gris    — neutre */
 
-  /* Rayon d'arrondi de base (boutons, cartes bien arrondis = look moderne) */
-  --radius: 1rem;
+  /* Rayon d'arrondi de base : genereux = look moderne "arrondi doux" */
+  --radius: 1.25rem;
 }
 
 /* ----------------------------------------------------------------------------
    ANIMATION : halo de pulsation du bouton d'urgence
-   Utilisée via la classe utilitaire `animate-pulse-ring` (voir @theme au-dessus)
+   Utilisee via la classe `animate-pulse-ring` (declaree dans @theme).
    ---------------------------------------------------------------------------- */
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 107, 74, 0.5);
+    box-shadow: 0 0 0 0 rgba(255, 107, 74, 0.55);
   }
   70% {
-    box-shadow: 0 0 0 32px rgba(255, 107, 74, 0);
+    box-shadow: 0 0 0 36px rgba(255, 107, 74, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(255, 107, 74, 0);
   }
 }
 
-/* Léger "battement" du bouton lui-même (optionnel, classe animate-soft-beat) */
+/* Leger "battement" du bouton lui-meme (classe animate-soft-beat) */
 @keyframes soft-beat {
   0%,
   100% {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.03);
+    transform: scale(1.035);
   }
 }
 .animate-soft-beat {
@@ -164,7 +168,34 @@
 }
 
 /* ----------------------------------------------------------------------------
-   Styles de base appliqués globalement
+   UTILITAIRES REUTILISABLES (classes maison pour un rendu premium homogene)
+   ---------------------------------------------------------------------------- */
+@layer utilities {
+  /* Carte premium : surface + bordure douce + ombre profonde discrete */
+  .card-premium {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.03) inset,
+      0 20px 40px -24px rgba(0, 0, 0, 0.7);
+  }
+
+  /* Lueur corail sous le bouton d'urgence */
+  .glow-coral {
+    box-shadow:
+      0 0 0 1px rgba(255, 107, 74, 0.35),
+      0 18px 50px -12px rgba(255, 107, 74, 0.55);
+  }
+
+  /* Degrade corail subtil (accent d'urgence, jamais sur de grandes surfaces) */
+  .bg-coral-gradient {
+    background-image: linear-gradient(145deg, #ff7d5e 0%, #ff6b4a 45%, #f2542d 100%);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Styles de base appliques globalement
    ---------------------------------------------------------------------------- */
 @layer base {
   * {
@@ -172,10 +203,10 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    /* Empêche le "rebond" élastique gênant sur iOS */
+    /* Empeche le "rebond" elastique gênant sur iOS */
     overscroll-behavior-y: none;
   }
-  /* Les titres utilisent la police condensée d'affichage par défaut */
+  /* Les titres utilisent la police condensee d'affichage par defaut */
   h1,
   h2,
   h3 {

@@ -15,6 +15,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import { EMERGENCY_TYPES } from '@/lib/emergencies'
+import { useLanguage } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 export function EmergencySheet({
@@ -25,6 +26,7 @@ export function EmergencySheet({
   onClose: () => void
 }) {
   const router = useRouter()
+  const { t, lang } = useLanguage() // textes traduits + langue active
 
   // Bloque le defilement de l'arriere-plan quand la feuille est ouverte
   useEffect(() => {
@@ -85,10 +87,10 @@ export function EmergencySheet({
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
             <h2 className="font-display text-2xl font-semibold text-foreground">
-              Quelle est l'urgence ?
+              {t.emergency.title}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Sélectionnez pour alerter vos voisins
+              {t.emergency.subtitle}
             </p>
           </div>
           <button
@@ -102,12 +104,12 @@ export function EmergencySheet({
 
         {/* --- Grille 2 colonnes des 6 types d'urgence --- */}
         <div className="grid grid-cols-2 gap-3">
-          {EMERGENCY_TYPES.map(({ id, label, hint, Icon, tint }) => (
+          {EMERGENCY_TYPES.map(({ id, label, hint, labelAr, hintAr, Icon, tint }) => (
             <button
               key={id}
               onClick={() => handleSelect(id)}
               className={cn(
-                'group flex flex-col items-start gap-3 rounded-3xl border border-border bg-card p-4 text-left',
+                'group flex flex-col items-start gap-3 rounded-3xl border border-border bg-card p-4 text-start',
                 'transition-all duration-200 hover:border-white/20 hover:bg-accent',
                 'active:scale-[0.97]',
               )}
@@ -123,9 +125,12 @@ export function EmergencySheet({
                 <Icon className="h-6 w-6" strokeWidth={2.2} />
               </span>
               <span className="leading-tight">
-                <span className="block font-semibold text-foreground">{label}</span>
+                {/* Libelle/precision selon la langue active */}
+                <span className="block font-semibold text-foreground">
+                  {lang === 'ar' ? labelAr : label}
+                </span>
                 <span className="mt-0.5 block text-xs text-muted-foreground">
-                  {hint}
+                  {lang === 'ar' ? hintAr : hint}
                 </span>
               </span>
             </button>

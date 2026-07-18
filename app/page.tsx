@@ -1,94 +1,76 @@
 /* ============================================================================
-   app/page.tsx — ECRAN 1 : ACCUEIL
+   app/page.tsx — ECRAN WELCOME (accueil initial de l'app)
    ----------------------------------------------------------------------------
-   Ecran central de l'app. Contient :
-     - le logo officiel (sans texte duplique)
-     - une pastille de localisation (contexte Nouakchott)
-     - le BOUTON SIGNATURE "AIDE" (halo pulsant) au centre
-     - au clic : ouverture de la feuille des 6 types d'urgence
-     - un bandeau de reassurance + acces Connexion / Inscription
+   Premier ecran vu a l'ouverture. Inspire de Revolut (epure, hierarchie forte,
+   2 gros boutons en bas) MAIS avec NOTRE palette (bleu-nuit + corail + menthe).
+   Contenu :
+     - Selecteur de langue en haut (FR / AR)
+     - Logo Rijal Lghayth + accroche
+     - 2 boutons : "Créer un compte" (principal) et "Se connecter" (secondaire)
+       -> "S'inscrire"  ouvre /register
+       -> "Se connecter" ouvre /login
    ============================================================================ */
 
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import { MapPin, ShieldCheck, Users } from 'lucide-react'
+import { ShieldCheck } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { BrandLogo } from '@/components/brand-logo'
-import { HelpButton } from '@/components/help-button'
-import { EmergencySheet } from '@/components/emergency-sheet'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { HelpContact } from '@/components/help-contact'
+import { useLanguage } from '@/lib/i18n'
 
-export default function HomePage() {
-  // Etat d'ouverture de la feuille des types d'urgence
-  const [sheetOpen, setSheetOpen] = useState(false)
+export default function WelcomePage() {
+  const { t } = useLanguage() // textes traduits (FR / AR)
 
   return (
     <AppShell className="items-center">
-      {/* --- En-tete : logo seul (le nom est deja dans l'image) --- */}
-      <header className="flex w-full flex-col items-center pt-2">
-        <BrandLogo size={150} priority />
+      {/* --- Barre haute : langue (cote debut) + Aide (cote fin) ---
+          justify-between pousse la langue au debut et l'aide a la fin ;
+          en arabe (RTL) les deux cotes s'inversent automatiquement. */}
+      <div className="flex w-full items-center justify-between gap-3">
+        <LanguageSwitcher />
+        <HelpContact />
+      </div>
 
-        {/* Localisation active (contexte : Nouakchott) */}
-        <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-3 py-1.5 text-xs font-medium text-muted-foreground">
-          <MapPin className="h-3.5 w-3.5 text-coral" />
-          Tevragh-Zeina, Nouakchott
-        </div>
-      </header>
+      {/* --- Zone centrale : logo + UNE seule phrase (la 2e) --- */}
+      <div className="flex flex-1 flex-col items-center justify-center text-center">
+        <BrandLogo size={210} priority />
 
-      {/* --- Zone centrale : bouton d'urgence --- */}
-      <div className="flex flex-1 flex-col items-center justify-center py-8">
-        <HelpButton onClick={() => setSheetOpen(true)} />
-
-        <p className="mt-8 max-w-[16rem] text-balance text-center text-sm leading-relaxed text-muted-foreground">
-          En cas de danger, appuyez. Vos voisins proches seront alertés
-          <span className="text-foreground"> immédiatement</span>.
+        {/* Une seule phrase sous le logo (le nom est deja dans l'image) */}
+        <p className="mt-8 max-w-[20rem] text-pretty text-base leading-relaxed text-muted-foreground">
+          {t.welcome.subtitle}
         </p>
       </div>
 
-      {/* --- Bandeau de reassurance (2 indicateurs) --- */}
-      <div className="grid w-full grid-cols-2 gap-3">
-        <div className="card-premium flex items-center gap-3 p-3.5">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-success/15 text-success">
-            <Users className="h-5 w-5" />
-          </span>
-          <div className="leading-tight">
-            <p className="font-display text-lg font-semibold text-foreground">24</p>
-            <p className="text-xs text-muted-foreground">voisins actifs</p>
-          </div>
-        </div>
-        <div className="card-premium flex items-center gap-3 p-3.5">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-coral/15 text-coral">
-            <ShieldCheck className="h-5 w-5" />
-          </span>
-          <div className="leading-tight">
-            <p className="font-display text-lg font-semibold text-foreground">
-              &lt; 2 min
-            </p>
-            <p className="text-xs text-muted-foreground">temps de réponse</p>
-          </div>
-        </div>
-      </div>
-
-      {/* --- Pied de page : acces connexion / inscription --- */}
-      <footer className="mt-5 flex w-full items-center justify-center gap-1 text-sm text-muted-foreground">
-        <Link
-          href="/login"
-          className="font-medium text-foreground underline-offset-4 hover:underline"
-        >
-          Se connecter
-        </Link>
-        <span aria-hidden>·</span>
+      {/* --- Bas de page : 2 boutons empiles (facon Revolut) ---
+          On utilise <Link> (navigation Next.js robuste et fiable) stylise
+          comme un bouton, au lieu d'un onClick : la navigation fonctionne
+          meme si le JavaScript n'est pas encore totalement charge. */}
+      <div className="mt-6 flex w-full flex-col gap-3">
+        {/* Bouton PRINCIPAL : creer un compte (corail plein) -> /register */}
         <Link
           href="/register"
-          className="font-medium text-coral underline-offset-4 hover:underline"
+          className="flex h-14 w-full items-center justify-center rounded-2xl bg-coral text-base font-semibold text-primary-foreground shadow-[0_16px_40px_-16px_rgba(255,107,74,0.7)] transition-all duration-200 hover:bg-coral/90 active:scale-[0.98]"
         >
-          Créer un compte
+          {t.common.register}
         </Link>
-      </footer>
 
-      {/* --- Feuille des 6 types d'urgence (modale du bas) --- */}
-      <EmergencySheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
+        {/* Bouton SECONDAIRE : se connecter (surface discrete) -> /login */}
+        <Link
+          href="/login"
+          className="flex h-14 w-full items-center justify-center rounded-2xl border border-border bg-secondary/60 text-base font-semibold text-foreground backdrop-blur transition-all duration-200 hover:bg-secondary active:scale-[0.98]"
+        >
+          {t.common.login}
+        </Link>
+
+        {/* Note de rassurance */}
+        <p className="mt-1 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+          <ShieldCheck className="h-3.5 w-3.5 text-success" />
+          {t.welcome.secure}
+        </p>
+      </div>
     </AppShell>
   )
 }

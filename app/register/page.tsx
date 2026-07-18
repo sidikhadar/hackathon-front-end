@@ -1,179 +1,310 @@
 /* ============================================================================
-   app/register/page.tsx — ECRAN 3 : INSCRIPTION
+   app/register/page.tsx — ECRAN INSCRIPTION (formulaire + verification OTP)
    ----------------------------------------------------------------------------
-   Formulaire de creation de compte :
-     - Photo de profil OPTIONNELLE (aperçu local via URL.createObjectURL)
-     - Nom complet
-     - Numero de telephone (indicatif +222)
-     - Contact d'urgence : nom + telephone (bloc distinct, entoure)
-   NB : logique simulee. La validation redirige vers l'OTP de connexion.
+   Etape 1 ('form') : photo optionnelle, nom, telephone, mot de passe,
+                      contact d'urgence + APPEL RAPIDE POLICE (permanent).
+   Etape 2 ('otp')  : verification du code a 6 chiffres (ecran separe).
+   En-tete identique a la connexion (embleme + titre + Retour), SANS selecteur
+   de langue ni bouton Aide.
+   Inscription verifiee -> redirection vers l'accueil connecte /home.
+   NB : logique simulee (aucun vrai SMS / stockage).
    ============================================================================ */
 
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Camera, Phone, User, UserPlus, Users } from 'lucide-react'
+import { Camera, CheckCircle2, Lock, LogIn, Phone, User, UserPlus, Users } from 'lucide-react'
 import Image from 'next/image'
 import { AppShell } from '@/components/app-shell'
+import { AuthTopBar } from '@/components/auth-topbar'
 import { Field } from '@/components/field'
+import { OtpInput } from '@/components/otp-input'
+import { PoliceQuickCall } from '@/components/police-quick-call'
 import { Button } from '@/components/ui/button'
+import { useLanguage } from '@/lib/i18n'
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { t } = useLanguage() // textes traduits
   const fileInput = useRef<HTMLInputElement>(null)
 
-  // Aperçu local de la photo de profil (optionnelle)
-  const [photo, setPhoto] = useState<string | null>(null)
+  // Etape courante : 'form' -> 'otp' -> 'success'
+  const [step, setStep] = useState<'form' | 'otp' | 'success'>('form')
+  const [photo, setPhoto] = useState<string | null>(null) // apercu photo (optionnel)
+  const [phone, setPhone] = useState('') // pour l'affichage dans l'etape OTP
+  const [code, setCode] = useState('')
+  const [seconds, setSeconds] = useState(0)
 
-  // Quand l'utilisateur choisit une image, on genere un aperçu local
+  // Compte a rebours du renvoi de code (etape OTP)
+  useEffect(() => {
+    if (seconds <= 0) return
+    const timer = setInterval(() => setSeconds((s) => s - 1), 1000)
+    return () => clearInterval(timer)
+  }, [seconds])
+
+  // Quand l'utilisateur choisit une image -> apercu local
   function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (file) setPhoto(URL.createObjectURL(file))
   }
 
-  // Soumission simulee -> on envoie vers la connexion (etape OTP)
+  // Etape 1 -> 2 : on "envoie" le code de verification
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    router.push('/login')
+    setStep('otp')
+    setSeconds(30)
+  }
+
+  // Etape 2 : verification simulee -> carte de succes (etape 3)
+  function handleVerify() {
+    if (code.length < 6) return
+    setStep('success')
+  }
+
+  // Retour : success -> Welcome, OTP -> formulaire, formulaire -> Welcome
+  function handleBack() {
+    if (step === 'otp') setStep('form')
+    else router.push('/')
   }
 
   return (
     <AppShell>
-      {/* --- Navigation haute --- */}
-      <div className="flex items-center">
-        <button
-          onClick={() => router.push('/')}
-          aria-label="Retour"
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-colors hover:bg-accent"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </button>
-      </div>
+      {/* --- En-tete : embleme + titre + Retour --- */}
+      <AuthTopBar onBack={handleBack} />
 
-      {/* --- Titre --- */}
-      <header className="mt-4">
-        <h1 className="text-balance font-display text-3xl font-semibold text-foreground">
-          Créer un compte
-        </h1>
-        <p className="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">
-          Rejoignez le réseau d'entraide de votre quartier.
-        </p>
-      </header>
-
-      {/* --- Formulaire --- */}
-      <form onSubmit={handleSubmit} className="mt-7 flex flex-1 flex-col gap-5">
-        {/* Photo de profil optionnelle (bouton rond) */}
-        <div className="flex flex-col items-center gap-2">
-          <button
-            type="button"
-            onClick={() => fileInput.current?.click()}
-            className="group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border border-dashed border-border bg-card transition-colors hover:border-coral/60"
-            aria-label="Ajouter une photo de profil"
-          >
-            {photo ? (
-              <Image
-                src={photo || '/placeholder.svg'}
-                alt="Aperçu de la photo de profil"
-                fill
-                className="object-cover"
-              />
+      {/* --- Titre de l'ecran (cache sur l'etape de succes) --- */}
+      {step !== 'success' && (
+        <header className="mt-6">
+          <h1 className="text-balance font-display text-3xl font-semibold text-foreground">
+            {step === 'form' ? t.register.title : t.register.titleOtp}
+          </h1>
+          <p className="mt-2 max-w-[20rem] text-pretty text-sm leading-relaxed text-muted-foreground">
+            {step === 'form' ? (
+              t.register.subtitle
             ) : (
-              <User className="h-9 w-9 text-muted-foreground" />
+              <>
+                {t.register.subtitleOtp}{' '}
+                <span dir="ltr" className="font-semibold text-foreground">
+                  +222 {phone}
+                </span>
+              </>
             )}
-            {/* Badge appareil photo */}
-            <span className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-coral text-primary-foreground ring-4 ring-background">
-              <Camera className="h-4 w-4" />
-            </span>
-          </button>
-          <span className="text-xs text-muted-foreground">Photo (optionnelle)</span>
-          <input
-            ref={fileInput}
-            type="file"
-            accept="image/*"
-            onChange={handlePhoto}
-            className="hidden"
+          </p>
+        </header>
+      )}
+
+      {step === 'form' ? (
+        /* ================= ETAPE 1 : FORMULAIRE ================= */
+        <form onSubmit={handleSubmit} className="mt-6 flex flex-1 flex-col gap-5">
+          {/* --- Photo de profil optionnelle (libelle affiche UNE seule fois) --- */}
+          <div className="flex items-center gap-4 rounded-3xl border border-border bg-card/60 p-3.5">
+            {/* Apercu / bouton rond cliquable */}
+            <button
+              type="button"
+              onClick={() => fileInput.current?.click()}
+              className="group relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-dashed border-border bg-input transition-colors hover:border-coral/60"
+              aria-label={t.register.addPhoto}
+            >
+              {photo ? (
+                <Image
+                  src={photo || '/placeholder.svg'}
+                  alt=""
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <User className="h-7 w-7 text-muted-foreground" />
+              )}
+              {/* Petit badge appareil photo */}
+              <span className="absolute bottom-0 end-0 flex h-6 w-6 items-center justify-center rounded-full bg-coral text-primary-foreground ring-2 ring-card">
+                <Camera className="h-3.5 w-3.5" />
+              </span>
+            </button>
+
+            {/* Libelle (une fois) + badge "optionnelle" + bouton d'action */}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-foreground">
+                  {t.register.photo}
+                </p>
+                <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                  {t.register.photoOptional}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => fileInput.current?.click()}
+                className="mt-1 text-sm font-medium text-coral underline-offset-4 hover:underline"
+              >
+                {photo ? t.register.changePhoto : t.register.addPhoto}
+              </button>
+            </div>
+
+            {/* Champ fichier reel (masque) */}
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/*"
+              onChange={handlePhoto}
+              className="hidden"
+            />
+          </div>
+
+          {/* Nom complet */}
+          <Field
+            label={t.register.fullName}
+            icon={<User className="h-5 w-5" />}
+            placeholder={t.register.fullNamePlaceholder}
+            autoComplete="name"
+            required
           />
-        </div>
 
-        {/* Nom complet */}
-        <Field
-          label="Nom complet"
-          icon={<User className="h-5 w-5" />}
-          placeholder="Ahmed Ould Mohamed"
-          autoComplete="name"
-          required
-        />
+          {/* Telephone */}
+          <Field
+            label={t.register.phoneLabel}
+            icon={<Phone className="h-5 w-5" />}
+            prefix="+222"
+            type="tel"
+            inputMode="tel"
+            placeholder="42 00 00 00"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
 
-        {/* Telephone */}
-        <Field
-          label="Numéro de téléphone"
-          icon={<Phone className="h-5 w-5" />}
-          prefix="+222"
-          type="tel"
-          inputMode="tel"
-          placeholder="42 00 00 00"
-          required
-        />
+          {/* Mot de passe (avec bouton oeil) */}
+          <Field
+            label={t.register.passwordLabel}
+            icon={<Lock className="h-5 w-5" />}
+            type="password"
+            placeholder={t.register.passwordPlaceholder}
+            autoComplete="new-password"
+            required
+          />
 
-        {/* --- Bloc contact d'urgence (distinct visuellement) --- */}
-        <div className="rounded-3xl border border-border bg-card/60 p-4">
-          <div className="mb-4 flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/15 text-success">
-              <Users className="h-4 w-4" />
-            </span>
-            <div className="leading-tight">
-              <p className="text-sm font-semibold text-foreground">
-                Contact d'urgence
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Prévenu si vous lancez une alerte
-              </p>
+          {/* --- Bloc contact d'urgence (distinct visuellement) --- */}
+          <div className="rounded-3xl border border-border bg-card/60 p-4">
+            <div className="mb-4 flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/15 text-success">
+                <Users className="h-4 w-4" />
+              </span>
+              <div className="leading-tight">
+                <p className="text-sm font-semibold text-foreground">
+                  {t.register.emergencyTitle}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {t.register.emergencySubtitle}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <Field
+                label={t.register.contactName}
+                icon={<User className="h-5 w-5" />}
+                placeholder={t.register.contactNamePlaceholder}
+                required
+              />
+              <Field
+                label={t.register.contactPhone}
+                icon={<Phone className="h-5 w-5" />}
+                prefix="+222"
+                type="tel"
+                inputMode="tel"
+                placeholder="42 00 00 00"
+                required
+              />
             </div>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <Field
-              label="Nom du contact"
-              icon={<User className="h-5 w-5" />}
-              placeholder="Proche ou famille"
-              required
-            />
-            <Field
-              label="Téléphone du contact"
-              icon={<Phone className="h-5 w-5" />}
-              prefix="+222"
-              type="tel"
-              inputMode="tel"
-              placeholder="42 00 00 00"
-              required
-            />
+          {/* --- Appel rapide POLICE (permanent, un clic) --- */}
+          <PoliceQuickCall />
+
+          {/* Bouton de soumission + lien connexion (pousse en bas) */}
+          <div className="mt-auto flex flex-col gap-4 pt-2">
+            <Button
+              type="submit"
+              size="lg"
+              className="h-14 rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90"
+            >
+              <UserPlus className="mr-1 h-5 w-5" />
+              {t.register.submit}
+            </Button>
+
+            <p className="text-center text-sm text-muted-foreground">
+              {t.register.haveAccount}{' '}
+              <Link
+                href="/login"
+                className="font-semibold text-coral underline-offset-4 hover:underline"
+              >
+                {t.common.login}
+              </Link>
+            </p>
+          </div>
+        </form>
+      ) : step === 'otp' ? (
+        /* ================= ETAPE 2 : VERIFICATION OTP (ecran separe) ================= */
+        <div className="mt-8 flex flex-1 flex-col">
+          <OtpInput value={code} onChange={setCode} />
+
+          {/* Renvoi du code */}
+          <div className="mt-5 text-center text-sm text-muted-foreground">
+            {seconds > 0 ? (
+              <span>
+                {t.login.resendIn}{' '}
+                <span dir="ltr" className="font-semibold text-foreground">
+                  {seconds}s
+                </span>
+              </span>
+            ) : (
+              <button
+                onClick={() => setSeconds(30)}
+                className="font-semibold text-coral underline-offset-4 hover:underline"
+              >
+                {t.login.resend}
+              </button>
+            )}
+          </div>
+
+          <div className="mt-auto pt-8">
+            <Button
+              size="lg"
+              onClick={handleVerify}
+              disabled={code.length < 6}
+              className="h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 disabled:opacity-40"
+            >
+              {t.register.verify}
+            </Button>
           </div>
         </div>
+      ) : (
+        /* ================= ETAPE 3 : CARTE DE SUCCES ================= */
+        <div className="flex flex-1 flex-col items-center justify-center py-10 text-center">
+          {/* Pastille verte + coche (animation d'apparition douce) */}
+          <span className="flex h-24 w-24 items-center justify-center rounded-full bg-success text-primary-foreground shadow-[0_20px_50px_-15px_rgba(34,153,84,0.6)] motion-safe:animate-in motion-safe:zoom-in-75 motion-safe:duration-500">
+            <CheckCircle2 className="h-12 w-12" strokeWidth={2.4} />
+          </span>
 
-        {/* Bouton de soumission (pousse en bas) */}
-        <div className="mt-auto flex flex-col gap-4 pt-2">
-          <Button
-            type="submit"
-            size="lg"
-            className="h-14 rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90"
-          >
-            <UserPlus className="mr-1 h-5 w-5" />
-            Créer mon compte
-          </Button>
-
-          <p className="text-center text-sm text-muted-foreground">
-            Déjà inscrit ?{' '}
-            <Link
-              href="/login"
-              className="font-semibold text-coral underline-offset-4 hover:underline"
-            >
-              Se connecter
-            </Link>
+          <h1 className="mt-8 text-balance font-display text-3xl font-semibold text-foreground">
+            {t.register.successTitle}
+          </h1>
+          <p className="mt-2 text-pretty text-base text-muted-foreground">
+            {t.register.successSubtitle}
           </p>
+
+          {/* Aller vers la connexion */}
+          <Button
+            size="lg"
+            onClick={() => router.push('/login')}
+            className="mt-10 h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90"
+          >
+            <LogIn className="mr-1 h-5 w-5" />
+            {t.register.loginNow}
+          </Button>
         </div>
-      </form>
+      )}
     </AppShell>
   )
 }

@@ -19,9 +19,11 @@
    Ex : --primary devient utilisable via `bg-primary`, `text-primary`, etc.
    ---------------------------------------------------------------------------- */
 @theme inline {
-  /* Polices — injectees depuis layout.tsx via next/font */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-oswald), 'Inter', sans-serif;
+  /* Polices — injectees depuis layout.tsx via next/font.
+     Cairo est ajoute en repli : les caracteres arabes (absents d'Inter et
+     d'Oswald) sont alors automatiquement rendus avec Cairo. */
+  --font-sans: var(--font-inter), var(--font-cairo), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-oswald), var(--font-cairo), 'Inter', sans-serif;
 
   /* Couleurs de base reliees aux variables definies plus bas */
   --color-background: var(--background);
@@ -212,5 +214,24 @@
   h3 {
     font-family: var(--font-display);
     letter-spacing: -0.01em;
+  }
+
+  /* ARABE (mode RTL) : Oswald/Inter ne contiennent pas les glyphes arabes.
+     Quand la page passe en arabe (dir="rtl"), on force la police Cairo sur
+     TOUT le contenu (corps + titres) pour un affichage correct et lisible.
+     On garde toutefois l'espacement de titres neutre pour l'arabe. */
+  [dir='rtl'],
+  [dir='rtl'] h1,
+  [dir='rtl'] h2,
+  [dir='rtl'] h3,
+  [dir='rtl'] input,
+  [dir='rtl'] button,
+  [dir='rtl'] textarea {
+    font-family: var(--font-cairo), 'Inter', sans-serif;
+  }
+  [dir='rtl'] h1,
+  [dir='rtl'] h2,
+  [dir='rtl'] h3 {
+    letter-spacing: 0;
   }
 }

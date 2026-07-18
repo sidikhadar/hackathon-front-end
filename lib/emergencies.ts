@@ -19,7 +19,9 @@ import {
 export type EmergencyType = {
   id: string
   label: string // Libelle affiche (FR)
-  hint: string // Courte precision sous le libelle
+  hint: string // Courte precision sous le libelle (FR)
+  labelAr: string // Libelle en arabe
+  hintAr: string // Precision en arabe
   Icon: LucideIcon // Icone lucide distincte
   /** Teinte d'accent (variable CSS) pour differencier visuellement chaque type */
   tint: string
@@ -30,6 +32,8 @@ export const EMERGENCY_TYPES: EmergencyType[] = [
     id: 'agression',
     label: 'Agression',
     hint: 'Violence, vol',
+    labelAr: 'اعتداء',
+    hintAr: 'عنف، سرقة',
     Icon: ShieldAlert,
     tint: 'var(--coral)',
   },
@@ -37,6 +41,8 @@ export const EMERGENCY_TYPES: EmergencyType[] = [
     id: 'malaise',
     label: 'Malaise',
     hint: 'Urgence médicale',
+    labelAr: 'وعكة صحية',
+    hintAr: 'طارئ طبي',
     Icon: HeartPulse,
     tint: '#4a9eff',
   },
@@ -44,6 +50,8 @@ export const EMERGENCY_TYPES: EmergencyType[] = [
     id: 'incendie',
     label: 'Incendie',
     hint: 'Feu, fumée',
+    labelAr: 'حريق',
+    hintAr: 'نار، دخان',
     Icon: Flame,
     tint: '#f5a524',
   },
@@ -51,6 +59,8 @@ export const EMERGENCY_TYPES: EmergencyType[] = [
     id: 'voiture',
     label: 'Voiture bloquée',
     hint: 'Panne, accident',
+    labelAr: 'سيارة معطلة',
+    hintAr: 'عطل، حادث',
     Icon: Car,
     tint: '#3ddc97',
   },
@@ -58,6 +68,8 @@ export const EMERGENCY_TYPES: EmergencyType[] = [
     id: 'enfant',
     label: 'Enfant perdu',
     hint: 'Disparition',
+    labelAr: 'طفل مفقود',
+    hintAr: 'اختفاء',
     Icon: Baby,
     tint: '#b388ff',
   },
@@ -65,6 +77,8 @@ export const EMERGENCY_TYPES: EmergencyType[] = [
     id: 'autre',
     label: 'Autre',
     hint: 'Autre urgence',
+    labelAr: 'أخرى',
+    hintAr: 'حالة أخرى',
     Icon: CircleEllipsis,
     tint: '#8a97a6',
   },

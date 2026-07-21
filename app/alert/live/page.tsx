@@ -23,8 +23,9 @@ import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
-/* Chargement de la carte uniquement cote client (pas de rendu serveur) */
-const LiveMap = dynamic(() => import('@/components/live-map').then((m) => m.LiveMap), {
+/* Chargement de la carte uniquement cote client (pas de rendu serveur).
+   Le composant est exporte en `export default`, donc pas de `.then(...)`. */
+const LiveMap = dynamic(() => import('@/components/live-map'), {
   ssr: false,
   loading: () => (
     <div className="flex h-full w-full items-center justify-center bg-secondary">
@@ -123,11 +124,7 @@ export default function LiveAlertPage() {
 
       {/* --- Carte temps reel --- */}
       <div className="relative mt-3 h-[42vh] w-full overflow-hidden">
-        <LiveMap
-          victim={VICTIM_POS}
-          neighbors={neighbors}
-          youLabel={t.live.youHere}
-        />
+        <LiveMap center={VICTIM_POS} responders={neighbors} />
 
         {/* Badge compteur "X voisins en route" pose sur la carte */}
         <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center">

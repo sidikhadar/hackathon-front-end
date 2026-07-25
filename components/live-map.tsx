@@ -55,6 +55,19 @@ function neighborIcon(active: boolean) {
   })
 }
 
+// --- Icone VOUS : point bleu pulsant (le voisin qui repond, vue "En route") ---
+const youIcon = L.divIcon({
+  className: '',
+  html: `
+    <div class="rl-pin rl-pin--you">
+      <span class="rl-pin__pulse"></span>
+      <span class="rl-pin__core"></span>
+    </div>
+  `,
+  iconSize: [26, 26],
+  iconAnchor: [13, 13],
+})
+
 /* Recentre/anime la carte quand le centre change (transition fluide) */
 function Recenter({ center }: { center: [number, number] }) {
   const map = useMap()

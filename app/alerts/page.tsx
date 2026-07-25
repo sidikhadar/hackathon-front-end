@@ -2,88 +2,24 @@
    app/alerts/page.tsx — ALERTES DES VOISINS
    ----------------------------------------------------------------------------
    Atteinte via la CLOCHE de notifications de l'accueil. Liste les voisins
-   proches ayant lance une alerte : nom, type d'urgence, distance, delai, et
-   un bouton "Je reponds". Donnees simulees pour la demonstration.
-   Bilingue (FR / AR) + sens de lecture automatique (RTL en arabe).
+   proches ayant lance une alerte : photo, nom, type, distance, delai. Toucher
+   une carte (ou "Je reponds") ouvre le DETAIL de l'alerte (/alerts/[id]).
+   Donnees partagees depuis lib/neighbor-alerts. Bilingue (FR / AR).
    ============================================================================ */
 
 'use client'
 
 import { useRouter } from 'next/navigation'
-import {
-  Flame,
-  HeartPulse,
-  MapPin,
-  ShieldAlert,
-  Car,
-  type LucideIcon,
-} from 'lucide-react'
+import Image from 'next/image'
+import { MapPin, ChevronRight } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { AuthTopBar } from '@/components/auth-topbar'
-import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/lib/i18n'
-
-// Type d'une alerte de voisin (donnees simulees)
-type Alert = {
-  id: number
-  name: string
-  icon: LucideIcon
-  tone: 'coral' | 'success' | 'amber'
-  label: { fr: string; ar: string }
-  distance: string
-  time: { fr: string; ar: string }
-}
-
-// Liste de demonstration (a remplacer par de vraies donnees plus tard)
-const ALERTS: Alert[] = [
-  {
-    id: 1,
-    name: 'Fatimetou',
-    icon: HeartPulse,
-    tone: 'coral',
-    label: { fr: 'Urgence médicale', ar: 'حالة طبية طارئة' },
-    distance: '120 m',
-    time: { fr: 'il y a 2 min', ar: 'قبل دقيقتين' },
-  },
-  {
-    id: 2,
-    name: 'Mohamed',
-    icon: ShieldAlert,
-    tone: 'amber',
-    label: { fr: 'Personne suspecte', ar: 'شخص مشبوه' },
-    distance: '340 m',
-    time: { fr: 'il y a 8 min', ar: 'قبل 8 دقائق' },
-  },
-  {
-    id: 3,
-    name: 'Aïcha',
-    icon: Flame,
-    tone: 'coral',
-    label: { fr: 'Début d’incendie', ar: 'بداية حريق' },
-    distance: '500 m',
-    time: { fr: 'il y a 15 min', ar: 'قبل 15 دقيقة' },
-  },
-  {
-    id: 4,
-    name: 'Sidi',
-    icon: Car,
-    tone: 'success',
-    label: { fr: 'Accident de route', ar: 'حادث سير' },
-    distance: '1,2 km',
-    time: { fr: 'il y a 22 min', ar: 'قبل 22 دقيقة' },
-  },
-]
-
-// Classes de couleur selon la "tonalite" de l'alerte
-const TONE: Record<Alert['tone'], string> = {
-  coral: 'bg-coral/15 text-coral',
-  success: 'bg-success/15 text-success',
-  amber: 'bg-amber-500/15 text-amber-600',
-}
+import { NEIGHBOR_ALERTS, TONE_CLASSES } from '@/lib/neighbor-alerts'
 
 export default function AlertsPage() {
   const router = useRouter()
-  const { t, lang } = useLanguage()
+  const { t, lang, dir } = useLanguage()
 
   return (
     <AppShell>
@@ -98,42 +34,61 @@ export default function AlertsPage() {
         </p>
       </header>
 
-      {/* Liste des alertes des voisins */}
+      {/* Liste des alertes des voisins (chaque carte ouvre le detail) */}
       <ul className="mt-6 flex flex-col gap-3 pb-4">
-        {ALERTS.map(({ id, name, icon: Icon, tone, label, distance, time }) => (
-          <li key={id} className="card-premium flex items-center gap-3 p-4">
-            {/* Icone du type d'urgence */}
-            <span
-              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${TONE[tone]}`}
-            >
-              <Icon className="h-6 w-6" />
-            </span>
+        {NEIGHBOR_ALERTS.map(
+          ({ id, name, photo, Icon, tone, label, distance, time }) => (
+            <li key={id}>
+              <button
+                onClick={() => router.push(`/alerts/${id}`)}
+                className="card-premium flex w-full items-center gap-3 p-3 text-start transition-transform active:scale-[0.99]"
+              >
+                {/* Photo de la victime avec pastille du type d'urgence */}
+                <div className="relative shrink-0">
+                  <div className="relative h-14 w-14 overflow-hidden rounded-2xl ring-1 ring-border">
+                    <Image
+                      src={photo || '/placeholder.svg'}
+                      alt={name}
+                      fill
+                      sizes="56px"
+                      className="object-cover"
+                    />
+                  </div>
+                  <span
+                    className={`absolute -bottom-1 -end-1 flex h-6 w-6 items-center justify-center rounded-full ring-2 ring-card ${TONE_CLASSES[tone]}`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                  </span>
+                </div>
 
-            {/* Infos : nom, type, distance + delai */}
-            <div className="min-w-0 flex-1 leading-tight">
-              <p className="truncate text-sm font-semibold text-foreground">
-                {name}
-              </p>
-              <p className="truncate text-sm text-muted-foreground">
-                {label[lang]}
-              </p>
-              <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5 text-coral" />
-                {t.alerts.distance} <span dir="ltr">{distance}</span>
-                <span aria-hidden>·</span>
-                {time[lang]}
-              </p>
-            </div>
+                {/* Infos : nom, type, distance + delai */}
+                <div className="min-w-0 flex-1 leading-tight">
+                  <p className="truncate text-sm font-semibold text-foreground">
+                    {name}
+                  </p>
+                  <p className="truncate text-sm text-muted-foreground">
+                    {label[lang]}
+                  </p>
+                  <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5 text-coral" />
+                    {t.alerts.distance} <span dir="ltr">{distance}</span>
+                    <span aria-hidden>·</span>
+                    {time[lang]}
+                  </p>
+                </div>
 
-            {/* Bouton de reponse */}
-            <Button
-              size="sm"
-              className="shrink-0 rounded-full bg-coral text-xs font-semibold text-primary-foreground hover:bg-coral/90"
-            >
-              {t.alerts.respond}
-            </Button>
-          </li>
-        ))}
+                {/* Chevron d'ouverture (retourne en RTL) */}
+                <ChevronRight
+                  className={
+                    dir === 'rtl'
+                      ? 'h-5 w-5 shrink-0 rotate-180 text-muted-foreground'
+                      : 'h-5 w-5 shrink-0 text-muted-foreground'
+                  }
+                />
+              </button>
+            </li>
+          ),
+        )}
       </ul>
     </AppShell>
   )

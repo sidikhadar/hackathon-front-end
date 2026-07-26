@@ -80,9 +80,12 @@ function Recenter({ center }: { center: [number, number] }) {
 export default function LiveMap({
   center,
   responders,
+  you,
 }: {
   center: { lat: number; lng: number }
   responders: Responder[]
+  /* Position optionnelle du voisin qui repond (affiche un pin bleu "Vous") */
+  you?: { lat: number; lng: number }
 }) {
   const c: [number, number] = [center.lat, center.lng]
 
@@ -121,6 +124,9 @@ export default function LiveMap({
           icon={neighborIcon(r.responded)}
         />
       ))}
+
+      {/* Pin "Vous" (le voisin qui repond) — bleu pulsant */}
+      {you && <Marker position={[you.lat, you.lng]} icon={youIcon} />}
 
       <Recenter center={c} />
     </MapContainer>

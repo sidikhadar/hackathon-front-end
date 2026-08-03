@@ -24,6 +24,7 @@ import {
   MapPin,
   Menu,
   Settings,
+  User,
   X,
 } from 'lucide-react'
 import { Emblem } from '@/components/emblem'
@@ -42,6 +43,12 @@ export function HomeHeader({ alertCount = 4 }: { alertCount?: number }) {
 
   // Items de navigation du tiroir
   const items = [
+    {
+      icon: User,
+      label: t.menu.profile,
+      sub: t.menu.profileSub,
+      href: '/profile',
+    },
     {
       icon: Settings,
       label: t.menu.settings,

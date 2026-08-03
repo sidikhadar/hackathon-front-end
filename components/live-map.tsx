@@ -6,12 +6,17 @@
  * Affiche :
  *   - un pin VICTIME pulsant au centre (rouge corail)
  *   - des pins VOISINS qui ont repondu (vert menthe)
+ *   - un pin "VOUS" optionnel (bleu) pour le voisin qui repond
+ *
+ * Utilise par deux vues :
+ *   - vue VICTIME  : app/alert/live/page.tsx (sans `you`)
+ *   - vue VOISIN   : app/alerts/[id]/respond/page.tsx (avec `you`)
  *
  * Les marqueurs sont dessines en HTML/CSS via `divIcon` (pas d'images),
  * ce qui garantit un rendu net et anime sans asset externe.
  *
  * Ce composant est charge dynamiquement (ssr:false) car Leaflet a besoin
- * de `window`. Voir app/alert/live/page.tsx.
+ * de `window`.
  */
 
 import { useEffect } from 'react'

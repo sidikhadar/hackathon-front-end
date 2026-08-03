@@ -7,7 +7,7 @@
      - Le message laisse par la victime
      - 4 gros boutons d'appel rapide (Police, Pompiers, Ambulance, Victime)
        -> couleurs + icones distinctes, gros au pouce, utilisables sous stress
-     - Bouton principal "Je reponds" -> ecran carte temps reel (/alert/live)
+     - Bouton principal "Je reponds" -> vue voisin "En route" (/alerts/[id]/respond)
    Bilingue (FR / AR) avec sens de lecture automatique.
    ============================================================================ */
 
@@ -206,11 +206,11 @@ export default function AlertDetailPage() {
         </div>
       </section>
 
-      {/* --- Bouton principal : Je reponds -> carte temps reel --- */}
+      {/* --- Bouton principal : Je reponds -> vue voisin "En route" --- */}
       <div className="mt-auto pt-6">
         <Button
           size="lg"
-          onClick={() => router.push('/alert/live')}
+          onClick={() => router.push(`/alerts/${alert.id}/respond`)}
           className="h-16 w-full rounded-2xl bg-foreground text-base font-semibold text-background hover:bg-foreground/90"
         >
           <HandHeart className={dir === 'rtl' ? 'ml-1 h-6 w-6' : 'mr-1 h-6 w-6'} />

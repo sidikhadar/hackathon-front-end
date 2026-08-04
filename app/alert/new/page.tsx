@@ -14,7 +14,7 @@
  * que la demo fonctionne toujours en hackathon.
  */
 
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Loader2, MapPin, Send } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
@@ -25,7 +25,27 @@ import { useLanguage } from '@/lib/i18n'
 // Position de repli (centre de Nouakchott) si le GPS est indisponible
 const FALLBACK = { lat: 18.0735, lng: -15.9582, accuracy: 25 }
 
+/**
+ * La page exportee enveloppe le contenu dans <Suspense> car
+ * useSearchParams() l'exige pour le build de production (Next.js).
+ */
 export default function AlertConfirmPage() {
+  return (
+    <Suspense
+      fallback={
+        <AppShell>
+          <div className="flex h-full w-full items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-coral" />
+          </div>
+        </AppShell>
+      }
+    >
+      <AlertConfirmContent />
+    </Suspense>
+  )
+}
+
+function AlertConfirmContent() {
   const router = useRouter()
   const params = useSearchParams()
   const { t, lang } = useLanguage()

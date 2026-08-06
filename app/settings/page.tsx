@@ -123,6 +123,8 @@ export default function SettingsPage() {
   const [sound, setSound] = useState(true)
   const [location, setLocation] = useState(true)
   const [guideOpen, setGuideOpen] = useState(false)
+  // Modale d'information (FAQ, conditions, confidentialite)
+  const [info, setInfo] = useState<null | 'faq' | 'terms' | 'privacy'>(null)
 
   const guideSteps = [
     { title: s.guideStep1Title, body: s.guideStep1 },
@@ -193,7 +195,7 @@ export default function SettingsPage() {
           <Row
             icon={HelpCircle}
             label={s.faq}
-            onClick={() => setGuideOpen(true)}
+            onClick={() => setInfo('faq')}
             right={<ChevronRight className="h-5 w-5 text-muted-foreground rtl:rotate-180" />}
           />
           <Row
@@ -213,13 +215,13 @@ export default function SettingsPage() {
           <Row
             icon={FileText}
             label={s.terms}
-            onClick={() => {}}
+            onClick={() => setInfo('terms')}
             right={<ChevronRight className="h-5 w-5 text-muted-foreground rtl:rotate-180" />}
           />
           <Row
             icon={Shield}
             label={s.privacy}
-            onClick={() => {}}
+            onClick={() => setInfo('privacy')}
             right={<ChevronRight className="h-5 w-5 text-muted-foreground rtl:rotate-180" />}
           />
         </div>
@@ -303,6 +305,97 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={() => setGuideOpen(false)}
+              className="mt-6 h-12 w-full rounded-xl bg-coral font-semibold text-white transition-transform active:scale-[0.98]"
+            >
+              {s.close}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ===== Modale : FAQ / Conditions / Confidentialite ===== */}
+      {info && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={
+            info === 'faq'
+              ? s.faqTitle
+              : info === 'terms'
+                ? s.termsTitle
+                : s.privacyTitle
+          }
+          onClick={() => setInfo(null)}
+        >
+          <div
+            className="animate-in slide-in-from-bottom-4 fade-in max-h-[85vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-card p-6 shadow-xl duration-300 sm:rounded-3xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-coral/15 text-coral">
+                  {info === 'faq' ? (
+                    <HelpCircle className="h-6 w-6" />
+                  ) : info === 'terms' ? (
+                    <FileText className="h-6 w-6" />
+                  ) : (
+                    <Shield className="h-6 w-6" />
+                  )}
+                </span>
+                <h3 className="font-display text-xl font-semibold text-foreground">
+                  {info === 'faq'
+                    ? s.faqTitle
+                    : info === 'terms'
+                      ? s.termsTitle
+                      : s.privacyTitle}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setInfo(null)}
+                aria-label={s.close}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors active:bg-secondary/60"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* FAQ : questions / reponses */}
+            {info === 'faq' && (
+              <ul className="mt-5 flex flex-col gap-5">
+                {s.faqItems.map((item, i) => (
+                  <li key={i} className="flex flex-col gap-1.5">
+                    <span className="text-sm font-semibold text-foreground">
+                      {item.q}
+                    </span>
+                    <span className="text-pretty text-sm leading-relaxed text-muted-foreground">
+                      {item.a}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Conditions / Confidentialite : paragraphes */}
+            {info !== 'faq' && (
+              <div className="mt-5 flex flex-col gap-3.5">
+                {(info === 'terms' ? s.termsBody : s.privacyBody).map(
+                  (para, i) => (
+                    <p
+                      key={i}
+                      className="text-pretty text-sm leading-relaxed text-muted-foreground"
+                    >
+                      {para}
+                    </p>
+                  ),
+                )}
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setInfo(null)}
               className="mt-6 h-12 w-full rounded-xl bg-coral font-semibold text-white transition-transform active:scale-[0.98]"
             >
               {s.close}

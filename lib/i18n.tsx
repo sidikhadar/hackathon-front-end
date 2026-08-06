@@ -174,6 +174,41 @@ const TRANSLATIONS = {
       guideStep4:
         'Ajoutez un proche dans votre profil : il sera prévenu automatiquement quand vous lancez une alerte.',
       close: 'Fermer',
+      // FAQ (contenu)
+      faqTitle: 'Questions fréquentes',
+      faqItems: [
+        {
+          q: 'Qui reçoit mon alerte ?',
+          a: 'Vos voisins proches inscrits sur Rijal Lghayth, ainsi que votre contact d’urgence enregistré.',
+        },
+        {
+          q: 'L’application fonctionne-t-elle sans internet ?',
+          a: 'Une connexion est nécessaire pour envoyer une alerte et localiser les voisins. Les appels d’urgence, eux, passent toujours.',
+        },
+        {
+          q: 'Puis-je annuler une alerte envoyée par erreur ?',
+          a: 'Oui. Depuis l’écran de suivi, vous pouvez indiquer « Je suis en sécurité » pour clore l’alerte à tout moment.',
+        },
+        {
+          q: 'Mes données de localisation sont-elles protégées ?',
+          a: 'Votre position n’est partagée que pendant une alerte active, uniquement avec les voisins qui portent secours.',
+        },
+      ],
+      // Légal (contenu)
+      termsTitle: 'Conditions d’utilisation',
+      termsBody: [
+        'Rijal Lghayth est un service d’entraide de voisinage destiné à alerter rapidement vos proches et voisins en cas d’urgence. Il ne remplace pas les services de secours officiels (Police, Pompiers, Ambulance).',
+        'En cas de danger réel, contactez toujours en priorité les numéros d’urgence officiels.',
+        'Vous vous engagez à utiliser l’application de bonne foi et à ne pas déclencher de fausses alertes. Tout abus peut entraîner la suspension de votre compte.',
+        'HYBRIDS TECH met tout en œuvre pour assurer la disponibilité du service mais ne peut garantir un fonctionnement ininterrompu.',
+      ],
+      privacyTitle: 'Politique de confidentialité',
+      privacyBody: [
+        'Nous collectons uniquement les informations nécessaires au fonctionnement du service : nom, téléphone, quartier et contact d’urgence.',
+        'Votre position géographique n’est utilisée que pendant une alerte active, afin de permettre aux voisins de vous porter secours.',
+        'Vos données ne sont jamais vendues à des tiers. Elles sont conservées de manière sécurisée par HYBRIDS TECH.',
+        'Vous pouvez demander la modification ou la suppression de vos données à tout moment via le support.',
+      ],
     },
     history: {
       title: 'Historique des alertes',
@@ -401,11 +436,11 @@ const TRANSLATIONS = {
       soundSub: 'رنين قوي عند الطوارئ',
       location: 'مشاركة الموقع',
       locationSub: 'مطلوب لتنبيه الجيران القريبين',
-      helpTitle: 'الم��اعدة والدعم',
+      helpTitle: 'الم����اعدة والدعم',
       guide: 'دليل الاستخدام',
       guideSub: 'كيفية استخدام التطبيق',
       faq: 'الأسئلة الشائعة',
-      contact: 'الاتصال بالدعم',
+      contact: 'الاتصال بالدع��',
       contactSub: 'راسلنا أو اتصل بنا',
       legalTitle: 'قانوني',
       terms: 'شروط الاستخدام',
@@ -433,6 +468,39 @@ const TRANSLATIONS = {
       guideStep4:
         'أضف قريبًا في ملفك الشخصي: سيتم إشعاره تلقائيًا عند إطلاقك تنبيهًا.',
       close: 'إغلاق',
+      faqTitle: 'الأسئلة الشائعة',
+      faqItems: [
+        {
+          q: 'من يتلقّى تنبيهي؟',
+          a: 'جيرانك القريبون المسجّلون في رجال الغيث، إضافةً إلى جهة اتصال الطوارئ المسجّلة لديك.',
+        },
+        {
+          q: 'هل يعمل التطبيق بدون إنترنت؟',
+          a: 'يلزم اتصال بالإنترنت لإرسال تنبيه وتحديد مواقع الجيران. أما مكالمات الطوارئ فتعمل دائمًا.',
+        },
+        {
+          q: 'هل يمكنني إلغاء تنبيه أُرسل بالخطأ؟',
+          a: 'نعم. من شاشة المتابعة يمكنك اختيار «أنا بأمان» لإغلاق التنبيه في أي وقت.',
+        },
+        {
+          q: 'هل بيانات موقعي محمية؟',
+          a: 'لا يُشارك موقعك إلا أثناء تنبيه نشط، ومع الجيران الذين يقدّمون المساعدة فقط.',
+        },
+      ],
+      termsTitle: 'شروط الاستخدام',
+      termsBody: [
+        'رجال الغيث خدمة تعاون بين الجيران لتنبيه أقربائك وجيرانك بسرعة عند الطوارئ. وهي لا تحلّ محلّ خدمات الإنقاذ الرسمية (الشرطة، الإطفاء، الإسعاف).',
+        'في حال وجود خطر حقيقي، اتصل دائمًا أولًا بأرقام الطوارئ الرسمية.',
+        'تتعهّد باستخدام التطبيق بحسن نية وعدم إطلاق تنبيهات كاذبة. أي إساءة قد تؤدّي إلى تعليق حسابك.',
+        'تبذل HYBRIDS TECH قصارى جهدها لضمان توفّر الخدمة لكنها لا تضمن تشغيلًا متواصلًا دون انقطاع.',
+      ],
+      privacyTitle: 'سياسة الخصوصية',
+      privacyBody: [
+        'نجمع فقط المعلومات اللازمة لعمل الخدمة: الاسم، الهاتف، الحي، وجهة اتصال الطوارئ.',
+        'لا يُستخدم موقعك الجغرافي إلا أثناء تنبيه نشط، لتمكين الجيران من مساعدتك.',
+        'لا تُباع بياناتك أبدًا لأطراف ثالثة. وتُحفظ بشكل آمن لدى HYBRIDS TECH.',
+        'يمكنك طلب تعديل أو حذف بياناتك في أي وقت عبر الدعم.',
+      ],
     },
     history: {
       title: 'سجل التنبيهات',

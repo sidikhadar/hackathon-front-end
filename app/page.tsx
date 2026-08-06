@@ -13,8 +13,9 @@
 
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
-import { ShieldCheck } from 'lucide-react'
+import { Loader2, ShieldCheck } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { BrandLogo } from '@/components/brand-logo'
 import { LanguageSwitcher } from '@/components/language-switcher'
@@ -23,6 +24,9 @@ import { useLanguage } from '@/lib/i18n'
 
 export default function WelcomePage() {
   const { t } = useLanguage() // textes traduits (FR / AR)
+
+  // Bouton en cours de navigation -> affiche un spinner sur CELUI qui est clique
+  const [pending, setPending] = useState<null | 'register' | 'login'>(null)
 
   return (
     <AppShell className="items-center">

@@ -18,7 +18,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Lock, MessageSquare, Phone, ShieldCheck } from 'lucide-react'
+import { Loader2, Lock, MessageSquare, Phone, ShieldCheck } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { AuthTopBar } from '@/components/auth-topbar'
 import { Field } from '@/components/field'
@@ -37,6 +37,8 @@ export default function LoginPage() {
   const [phone, setPhone] = useState('')
   const [code, setCode] = useState('')
   const [seconds, setSeconds] = useState(0) // compte a rebours de renvoi
+  // Action en cours -> spinner sur le bouton concerne uniquement
+  const [loading, setLoading] = useState<null | 'login' | 'sms' | 'verify'>(null)
 
   // Decremente le compte a rebours chaque seconde (renvoi du code)
   useEffect(() => {
@@ -45,24 +47,36 @@ export default function LoginPage() {
     return () => clearInterval(timer)
   }, [seconds])
 
+  // Simule un court appel reseau avant d'executer l'action
+  function simulate(key: 'login' | 'sms' | 'verify', action: () => void) {
+    if (loading) return
+    setLoading(key)
+    setTimeout(() => {
+      action()
+      setLoading(null)
+    }, 900)
+  }
+
   // Connexion par mot de passe (simulee) -> accueil connecte
   function handlePasswordLogin(e: React.FormEvent) {
     e.preventDefault()
-    router.push('/home')
+    simulate('login', () => router.push('/home'))
   }
 
   // Envoi du formulaire en mode SMS -> bascule vers l'ecran OTP separe
   function handleSendCode(e: React.FormEvent) {
     e.preventDefault()
     if (phone.replace(/\D/g, '').length < 8) return
-    setStep('otp')
-    setSeconds(30)
+    simulate('sms', () => {
+      setStep('otp')
+      setSeconds(30)
+    })
   }
 
   // Validation du code (simulee) -> accueil connecte
   function handleVerify() {
     if (code.length < 6) return
-    router.push('/home')
+    simulate('verify', () => router.push('/home'))
   }
 
   // Retour : OTP -> formulaire (mode SMS), sinon vers Welcome
@@ -161,8 +175,13 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="h-14 rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90"
+                  disabled={loading !== null}
+                  aria-busy={loading === 'login'}
+                  className="h-14 rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 disabled:opacity-100"
                 >
+                  {loading === 'login' && (
+                    <Loader2 className="mr-1 h-5 w-5 animate-spin" aria-hidden="true" />
+                  )}
                   {t.common.login}
                 </Button>
 
@@ -193,9 +212,15 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="h-14 rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90"
+                  disabled={loading !== null}
+                  aria-busy={loading === 'sms'}
+                  className="h-14 rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 disabled:opacity-100"
                 >
-                  <MessageSquare className="mr-1 h-5 w-5" />
+                  {loading === 'sms' ? (
+                    <Loader2 className="mr-1 h-5 w-5 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <MessageSquare className="mr-1 h-5 w-5" />
+                  )}
                   {t.login.sendCode}
                 </Button>
 
@@ -250,9 +275,15 @@ export default function LoginPage() {
             <Button
               size="lg"
               onClick={handleVerify}
-              disabled={code.length < 6}
-              className="h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 disabled:opacity-40"
+              disabled={code.length < 6 || loading !== null}
+              aria-busy={loading === 'verify'}
+              className={`h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 ${
+                loading === 'verify' ? 'disabled:opacity-100' : 'disabled:opacity-40'
+              }`}
             >
+              {loading === 'verify' && (
+                <Loader2 className="mr-1 h-5 w-5 animate-spin" aria-hidden="true" />
+              )}
               {t.login.verify}
             </Button>
           </div>

@@ -15,7 +15,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Camera, CheckCircle2, Lock, LogIn, Phone, User, UserPlus, Users } from 'lucide-react'
+import { Camera, CheckCircle2, Loader2, Lock, LogIn, Phone, User, UserPlus, Users } from 'lucide-react'
 import Image from 'next/image'
 import { AppShell } from '@/components/app-shell'
 import { AuthTopBar } from '@/components/auth-topbar'
@@ -36,6 +36,18 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState('') // pour l'affichage dans l'etape OTP
   const [code, setCode] = useState('')
   const [seconds, setSeconds] = useState(0)
+  // Action en cours -> spinner sur le bouton concerne uniquement
+  const [loading, setLoading] = useState<null | 'submit' | 'verify' | 'login'>(null)
+
+  // Simule un court appel reseau avant d'executer l'action
+  function simulate(key: 'submit' | 'verify' | 'login', action: () => void) {
+    if (loading) return
+    setLoading(key)
+    setTimeout(() => {
+      action()
+      setLoading(null)
+    }, 900)
+  }
 
   // Compte a rebours du renvoi de code (etape OTP)
   useEffect(() => {
@@ -53,14 +65,16 @@ export default function RegisterPage() {
   // Etape 1 -> 2 : on "envoie" le code de verification
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setStep('otp')
-    setSeconds(30)
+    simulate('submit', () => {
+      setStep('otp')
+      setSeconds(30)
+    })
   }
 
   // Etape 2 : verification simulee -> carte de succes (etape 3)
   function handleVerify() {
     if (code.length < 6) return
-    setStep('success')
+    simulate('verify', () => setStep('success'))
   }
 
   // Retour : success -> Welcome, OTP -> formulaire, formulaire -> Welcome
@@ -227,9 +241,15 @@ export default function RegisterPage() {
             <Button
               type="submit"
               size="lg"
-              className="h-14 rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90"
+              disabled={loading !== null}
+              aria-busy={loading === 'submit'}
+              className="h-14 rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 disabled:opacity-100"
             >
-              <UserPlus className="mr-1 h-5 w-5" />
+              {loading === 'submit' ? (
+                <Loader2 className="mr-1 h-5 w-5 animate-spin" aria-hidden="true" />
+              ) : (
+                <UserPlus className="mr-1 h-5 w-5" />
+              )}
               {t.register.submit}
             </Button>
 
@@ -272,9 +292,15 @@ export default function RegisterPage() {
             <Button
               size="lg"
               onClick={handleVerify}
-              disabled={code.length < 6}
-              className="h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 disabled:opacity-40"
+              disabled={code.length < 6 || loading !== null}
+              aria-busy={loading === 'verify'}
+              className={`h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 ${
+                loading === 'verify' ? 'disabled:opacity-100' : 'disabled:opacity-40'
+              }`}
             >
+              {loading === 'verify' && (
+                <Loader2 className="mr-1 h-5 w-5 animate-spin" aria-hidden="true" />
+              )}
               {t.register.verify}
             </Button>
           </div>
@@ -297,10 +323,16 @@ export default function RegisterPage() {
           {/* Aller vers la connexion */}
           <Button
             size="lg"
-            onClick={() => router.push('/login')}
-            className="mt-10 h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90"
+            onClick={() => simulate('login', () => router.push('/login'))}
+            disabled={loading !== null}
+            aria-busy={loading === 'login'}
+            className="mt-10 h-14 w-full rounded-2xl bg-coral text-base font-semibold text-primary-foreground hover:bg-coral/90 disabled:opacity-100"
           >
-            <LogIn className="mr-1 h-5 w-5" />
+            {loading === 'login' ? (
+              <Loader2 className="mr-1 h-5 w-5 animate-spin" aria-hidden="true" />
+            ) : (
+              <LogIn className="mr-1 h-5 w-5" />
+            )}
             {t.register.loginNow}
           </Button>
         </div>

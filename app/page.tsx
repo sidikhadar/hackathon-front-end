@@ -56,16 +56,30 @@ export default function WelcomePage() {
         {/* Bouton PRINCIPAL : creer un compte (corail plein) -> /register */}
         <Link
           href="/register"
-          className="flex h-14 w-full items-center justify-center rounded-2xl bg-coral text-base font-semibold text-primary-foreground shadow-[0_16px_40px_-16px_rgba(255,107,74,0.7)] transition-all duration-200 hover:bg-coral/90 active:scale-[0.98]"
+          onClick={() => setPending('register')}
+          aria-busy={pending === 'register'}
+          className={`flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-coral text-base font-semibold text-primary-foreground shadow-[0_16px_40px_-16px_rgba(255,107,74,0.7)] transition-all duration-200 hover:bg-coral/90 active:scale-[0.98] ${
+            pending && pending !== 'register' ? 'pointer-events-none opacity-60' : ''
+          } ${pending === 'register' ? 'pointer-events-none' : ''}`}
         >
+          {pending === 'register' && (
+            <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+          )}
           {t.common.register}
         </Link>
 
         {/* Bouton SECONDAIRE : se connecter (surface discrete) -> /login */}
         <Link
           href="/login"
-          className="flex h-14 w-full items-center justify-center rounded-2xl border border-border bg-secondary/60 text-base font-semibold text-foreground backdrop-blur transition-all duration-200 hover:bg-secondary active:scale-[0.98]"
+          onClick={() => setPending('login')}
+          aria-busy={pending === 'login'}
+          className={`flex h-14 w-full items-center justify-center gap-2 rounded-2xl border border-border bg-secondary/60 text-base font-semibold text-foreground backdrop-blur transition-all duration-200 hover:bg-secondary active:scale-[0.98] ${
+            pending && pending !== 'login' ? 'pointer-events-none opacity-60' : ''
+          } ${pending === 'login' ? 'pointer-events-none' : ''}`}
         >
+          {pending === 'login' && (
+            <Loader2 className="h-5 w-5 animate-spin text-coral" aria-hidden="true" />
+          )}
           {t.common.login}
         </Link>
 

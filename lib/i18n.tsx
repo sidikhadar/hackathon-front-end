@@ -628,7 +628,15 @@ const TRANSLATIONS = {
 } as const
 
 /* Type du dictionnaire (structure identique pour FR et AR) */
-export type Dictionary = (typeof TRANSLATIONS)['fr']
+// Les litteraux FR/AR different (as const) : on les elargit en `string`
+// pour que les deux langues partagent la meme structure de cles.
+type Widen<T> = T extends string
+  ? string
+  : T extends readonly (infer U)[]
+    ? readonly Widen<U>[]
+    : { readonly [K in keyof T]: Widen<T[K]> }
+
+export type Dictionary = Widen<(typeof TRANSLATIONS)['fr']>
 
 /* Contenu partage par le contexte */
 type LanguageContextValue = {

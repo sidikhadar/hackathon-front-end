@@ -314,3 +314,13 @@
     opacity: 0;
   }
 }
+
+/* Demo animee : barre de progression des scenes */
+@keyframes demo-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
